@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_forms",
+    "crispy_tailwind",
     "birdie_buddy.round_entry",
+    "birdie_buddy.users",
 ]
 
 MIDDLEWARE = [
@@ -136,6 +139,3 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "birdie_buddy" / "static",
 ]
-
-print(STATIC_ROOT)
-print(STATICFILES_DIRS)

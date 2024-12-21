@@ -21,6 +21,15 @@ django==5.1.4
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
+iniconfig==2.0.0
+    # via pytest
 invoke==2.2.0
+packaging==24.2
+    # via pytest
+pluggy==1.5.0
+    # via pytest
+pytest==8.3.4
+    # via pytest-django
+pytest-django==4.9.0
 sqlparse==0.5.3
     # via django

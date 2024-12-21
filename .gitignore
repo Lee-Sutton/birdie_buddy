@@ -1,5 +1,6 @@
 # Node
 node_modules/
+tailwindcss
 
 # Python
 __pycache__/

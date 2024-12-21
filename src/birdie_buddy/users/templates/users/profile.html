@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10">
+  <div class="bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-gray-900">Profile</h2>
+    <div class="space-y-4">
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600 font-medium">Username:</span>
+        <span>{{ user.username }}</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600 font-medium">Email:</span>
+        <span>{{ user.email }}</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600 font-medium">Member since:</span>
+        <span>{{ user.date_joined|date:"F j, Y" }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
