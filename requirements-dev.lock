@@ -12,15 +12,19 @@
 -e file:.
 asgiref==3.8.1
     # via django
+    # via django-htmx
 crispy-tailwind==1.0.3
     # via birdie-buddy
 django==5.1.4
     # via birdie-buddy
     # via crispy-tailwind
     # via django-crispy-forms
+    # via django-htmx
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
+django-htmx==1.21.0
+    # via birdie-buddy
 iniconfig==2.0.0
     # via pytest
 invoke==2.2.0

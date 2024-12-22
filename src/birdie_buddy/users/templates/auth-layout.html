@@ -8,15 +8,19 @@
             {% block title %}Birdie Buddy{% endblock %}
         </title>
         <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+        <script src="{% static 'htmx.min.js' %}" defer></script>
     </head>
-    <div class="min-h-full">
-        <div class="py-10">
-            <main>
-                <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
-            </main>
+
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+        <div class="min-h-full" hx-boost="true">
+            <div class="py-10">
+                <main>
+                    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                        {% block content %}
+                        {% endblock content %}
+                    </div>
+                </main>
+            </div>
         </div>
-    </div>
+    </body>
 </html>
