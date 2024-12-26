@@ -32,7 +32,6 @@ class HoleCreateView(LoginRequiredMixin, CreateView, UpdateView):
     fields = ["score", "mental_scorecard"]
 
     def get_object(self, queryset=None):
-        # Try to get existing hole first
         # TODO: enforce on the database as well
         try:
             return Hole.objects.get(
