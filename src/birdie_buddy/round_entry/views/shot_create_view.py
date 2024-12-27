@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.views.generic.base import View
 from django.forms import formset_factory
 
-from birdie_buddy.round_entry.forms import ShotForm
+from birdie_buddy.round_entry.forms import ShotForm, ShotFormSetHelper
 from ..models import Hole
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -38,12 +38,14 @@ class ShotCreateView(LoginRequiredMixin, View):
 
         ShotFormSet = formset_factory(ShotForm, extra=0)
         formset = ShotFormSet(initial=[{} for _ in range(hole.score)])
+        helper = ShotFormSetHelper()
 
         return render(
             request,
             "round_entry/shots_form.html",
             {
                 "formset": formset,
+                "helper": helper,
                 "number": number,
                 "shot_count": range(1, hole.score + 1),
             },

@@ -1,5 +1,5 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column
+from crispy_forms.helper import FormHelper, Layout
+from crispy_forms.layout import Field, Row, Div
 from django import forms
 
 from birdie_buddy.round_entry.models import Shot
@@ -10,16 +10,18 @@ class ShotForm(forms.ModelForm):
         model = Shot
         fields = ["start_distance", "lie"]
 
+
+class ShotFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = "space-y-4"  # Tailwind spacing between form elements
-        self.helper.layout = Layout(
-            Row(
-                Column(
-                    "start_distance", css_class="w-1/2 px-2"
-                ),  # Tailwind utility classes
-                Column("lie", css_class="w-1/2 px-2"),
-                css_class="flex space-x-4",  # Add spacing between columns
+        self.template_pack = "tailwind"
+        self.layout = Layout(
+            Div(
+                Div(
+                    Field("start_distance"),
+                    css_class="w-full",
+                ),
+                Div(Field("lie"), css_class="w-full"),
+                css_class="flex space-x-4",
             )
         )
