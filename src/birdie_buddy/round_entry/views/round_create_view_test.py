@@ -1,28 +1,17 @@
 import pytest
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 from birdie_buddy.round_entry.models import Round
 from pytest_django.asserts import assertTemplateUsed, assertRedirects
-
-User = get_user_model()
-
-
-@pytest.fixture
-def user():
-    return User.objects.create_user(username="testuser", password="testpass123")
-
-
-@pytest.fixture
-def authenticated_client(client, user):
-    client.login(username="testuser", password="testpass123")
-    return client
 
 
 @pytest.mark.django_db
 class TestRoundCreateView:
+    @property
+    def url(self):
+        return reverse("round_entry:create_round")
+
     def test_unauthenticated_user_redirected_to_login(self, client):
-        url = reverse("round_entry:create_round")
-        response = client.get(url)
+        response = client.get(self.url)
         assert response.status_code == 302
         assert "/login/" in response.url
 
@@ -33,10 +22,9 @@ class TestRoundCreateView:
         assertTemplateUsed(response, "round_entry/round_form.html")
 
     def test_can_create_round(self, authenticated_client, user):
-        url = reverse("round_entry:create_round")
         data = {"course_name": "Test Golf Course", "holes_played": 18}
 
-        response = authenticated_client.post(url, data)
+        response = authenticated_client.post(self.url, data)
 
         # Check if round was created
         assert Round.objects.count() == 1
