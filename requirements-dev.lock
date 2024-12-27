@@ -25,6 +25,7 @@ django-crispy-forms==2.3
     # via crispy-tailwind
 django-htmx==1.21.0
     # via birdie-buddy
+django-types==0.20.0
 iniconfig==2.0.0
     # via pytest
 invoke==2.2.0
@@ -37,3 +38,5 @@ pytest==8.3.4
 pytest-django==4.9.0
 sqlparse==0.5.3
     # via django
+types-psycopg2==2.9.21.20241019
+    # via django-types
