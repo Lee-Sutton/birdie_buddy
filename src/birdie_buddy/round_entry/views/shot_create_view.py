@@ -23,13 +23,16 @@ class ShotCreateView(LoginRequiredMixin, View):
                     shot.hole = hole
                     shot.user = request.user
                     shot.save()
-            # TODO: handle when the round is finished
             url = reverse(
                 "round_entry:create_hole", kwargs={"id": id, "number": number + 1}
             )
             return redirect(url)
 
-        return render(request, "round_entry/shots_form.html", {"formset": formset})
+        return render(
+            request,
+            "round_entry/shots_form.html",
+            {"formset": formset, "helper": ShotFormSetHelper(), "number": number},
+        )
 
     def get(self, request, id, number):
         hole = get_object_or_404(
@@ -47,6 +50,5 @@ class ShotCreateView(LoginRequiredMixin, View):
                 "formset": formset,
                 "helper": helper,
                 "number": number,
-                "shot_count": range(1, hole.score + 1),
             },
         )

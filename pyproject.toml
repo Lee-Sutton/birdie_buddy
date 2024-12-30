@@ -10,6 +10,7 @@ dependencies = [
     "django-crispy-forms>=2.3",
     "crispy-tailwind>=1.0.3",
     "django-htmx>=1.21.0",
+    "django-extensions>=3.2.3",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
@@ -25,6 +26,7 @@ dev-dependencies = [
     "pytest>=8.3.4",
     "pytest-django>=4.9.0",
     "django-types>=0.20.0",
+    "factory-boy>=3.3.1",
 ]
 
 [tool.hatch.metadata]

@@ -19,13 +19,19 @@ django==5.1.4
     # via birdie-buddy
     # via crispy-tailwind
     # via django-crispy-forms
+    # via django-extensions
     # via django-htmx
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
+django-extensions==3.2.3
+    # via birdie-buddy
 django-htmx==1.21.0
     # via birdie-buddy
 django-types==0.20.0
+factory-boy==3.3.1
+faker==33.1.0
+    # via factory-boy
 iniconfig==2.0.0
     # via pytest
 invoke==2.2.0
@@ -36,7 +42,13 @@ pluggy==1.5.0
 pytest==8.3.4
     # via pytest-django
 pytest-django==4.9.0
+python-dateutil==2.9.0.post0
+    # via faker
+six==1.17.0
+    # via python-dateutil
 sqlparse==0.5.3
     # via django
 types-psycopg2==2.9.21.20241019
     # via django-types
+typing-extensions==4.12.2
+    # via faker

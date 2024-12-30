@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "django_htmx",
+    "django_extensions",
     "crispy_tailwind",
     "birdie_buddy.round_entry",
     "birdie_buddy.users",
@@ -141,3 +142,5 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "birdie_buddy" / "static",
 ]
+
+LOGIN_URL = "/users/login/"

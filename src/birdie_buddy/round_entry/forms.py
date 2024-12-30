@@ -1,5 +1,5 @@
 from crispy_forms.helper import FormHelper, Layout
-from crispy_forms.layout import Field, Row, Div
+from crispy_forms.layout import Field, Div, Submit, Button
 from django import forms
 
 from birdie_buddy.round_entry.models import Shot
@@ -15,6 +15,7 @@ class ShotFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.template_pack = "tailwind"
+        self.form_tag = False  # Disable form tags for individual forms
         self.layout = Layout(
             Div(
                 Div(

@@ -1,10 +1,10 @@
 from django.views.generic import CreateView
 from django.urls import reverse
 from django.views.generic.edit import UpdateView
-
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from birdie_buddy.round_entry.models import Hole
+from birdie_buddy.round_entry.models import Hole, Round
 
 
 class HoleCreateView(LoginRequiredMixin, CreateView, UpdateView):
@@ -12,7 +12,9 @@ class HoleCreateView(LoginRequiredMixin, CreateView, UpdateView):
     fields = ["score", "mental_scorecard"]
 
     def get_object(self, queryset=None):
-        # TODO: enforce on the database as well
+        # First verify the round exists and belongs to the user
+        get_object_or_404(Round, id=self.kwargs["id"], user=self.request.user)
+
         try:
             return Hole.objects.get(
                 user=self.request.user,

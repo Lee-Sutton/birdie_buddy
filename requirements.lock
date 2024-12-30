@@ -19,10 +19,13 @@ django==5.1.4
     # via birdie-buddy
     # via crispy-tailwind
     # via django-crispy-forms
+    # via django-extensions
     # via django-htmx
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
+django-extensions==3.2.3
+    # via birdie-buddy
 django-htmx==1.21.0
     # via birdie-buddy
 sqlparse==0.5.3
