@@ -16,4 +16,9 @@ urlpatterns = [
         views.ShotCreateView.as_view(),
         name="create_shots",
     ),
+    path(
+        "rounds/<int:id>",
+        views.RoundDetailView.as_view(),
+        name="round_detail",
+    ),
 ]

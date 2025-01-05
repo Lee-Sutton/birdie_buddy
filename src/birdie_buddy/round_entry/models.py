@@ -3,6 +3,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
+from birdie_buddy.round_entry.services import avg_strokes_to_holeout
+
 User = get_user_model()
 
 
@@ -28,6 +30,14 @@ class Hole(models.Model):
     number = models.IntegerField(
         null=True, validators=[MinValueValidator(1), MaxValueValidator(18)]
     )
+
+    @property
+    def strokes_gained(self):
+        first_shot = self.shot_set.first()
+        return (
+            avg_strokes_to_holeout(first_shot.start_distance, first_shot.lie)
+            - self.score
+        )
 
 
 class Shot(models.Model):
