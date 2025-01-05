@@ -29,11 +29,21 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Welcome back, {username}!")
-                return redirect("home")
+                next_url = (
+                    request.POST.get("next")
+                    or request.GET.get("next")
+                    or "round_entry:home"
+                )
+                response = redirect(next_url)
+                if request.headers.get("HX-Request"):
+                    response["HX-Redirect"] = response.url
+                return response
         messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
-    return render(request, "users/login.html", {"form": form})
+    return render(
+        request, "users/login.html", {"form": form, "next": request.GET.get("next", "")}
+    )
 
 
 @login_required
@@ -46,4 +56,3 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     return render(request, "users/profile.html")
-
