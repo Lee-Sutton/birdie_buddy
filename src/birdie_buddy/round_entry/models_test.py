@@ -1,13 +1,32 @@
-from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
+from birdie_buddy.round_entry.factories.hole_factory import (
+    HoleFactory,
+)
 from birdie_buddy.round_entry.models import Hole
 import pytest
 
 
-class TestHole:
-    def test_strokes_gained(self, db):
+class TestStrokesGained:
+    def test_strokes_gained(self, db, user):
         """
         The hole strokes gained is calculated as the difference between
         the scoring average for the hole length minus the score
         """
-        hole: Hole = HoleFactory.par_5_birdie()
-        assert hole.strokes_gained == pytest.approx(0.41)
+
+        hole = HoleFactory.par_3_par()
+        assert hole.strokes_gained == pytest.approx(0.085)
+
+
+class TestStrokesGainedDriving:
+    def test_driver_gained(self, db):
+        hole: Hole = HoleFactory.par_4_par()
+        expected_sg = 3.99 - 2.88  # 3.99 from 400 yds tee - 2.88 from 130 in FW
+        assert hole.strokes_gained_driving == pytest.approx(expected_sg)
+
+    def test_returns_0_if_tee_shot_is_approach(self, db):
+        """The tee shot is considered an approach shot if the hole is less than a par 4"""
+        hole: Hole = HoleFactory.par_3_par()
+        assert hole.strokes_gained_driving == 0
+
+    def test_hole_in_one(self, db):
+        hole: Hole = HoleFactory.par_4_hole_in_one()
+        assert hole.strokes_gained_driving == pytest.approx(3.714)

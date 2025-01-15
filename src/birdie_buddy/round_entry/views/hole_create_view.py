@@ -9,7 +9,7 @@ from birdie_buddy.round_entry.models import Hole, Round
 
 class HoleCreateView(LoginRequiredMixin, CreateView, UpdateView):
     model = Hole
-    fields = ["score", "mental_scorecard"]
+    fields = ["par", "score", "mental_scorecard"]
 
     def get_object(self, queryset=None):
         # First verify the round exists and belongs to the user

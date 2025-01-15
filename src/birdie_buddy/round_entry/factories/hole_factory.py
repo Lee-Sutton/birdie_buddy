@@ -15,8 +15,34 @@ class HoleFactory(factory.django.DjangoModelFactory):
 
     mental_scorecard = factory.LazyAttribute(lambda o: o.score)
     score = factory.Faker("random_int", min=2, max=6)
+    par = factory.Faker("random_int", min=2, max=6)
 
-    @factory.post_generation
+    @classmethod
+    def par_4_hole_in_one(cls) -> Hole:
+        obj = cls(par=4)
+        obj.shot_set.all().delete()
+        create_par_4_hole_in_one(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+        return obj
+
+    @classmethod
+    def par_3_par(cls) -> Hole:
+        obj = cls(par=3)
+        obj.shot_set.all().delete()
+        create_par_3_par(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+        return obj
+
+    @classmethod
+    def par_4_par(cls) -> Hole:
+        obj = cls(par=4)
+        obj.shot_set.all().delete()
+        obj.refresh_from_db()
+        create_par_4_par(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+        return obj
+
+    @staticmethod
     def create_shots(obj, create, extracted, **kwargs):
         if not create:
             return
@@ -34,7 +60,17 @@ class HoleFactory(factory.django.DjangoModelFactory):
             6: [create_par_5_bogey],
         }
 
-        random.choice(scenarios[obj.score])(obj)
+        random.choice(scenarios[obj.par])(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+
+    @staticmethod
+    def _adjust_scores_based_on_shots(obj):
+        obj.score = obj.shot_set.count()
+        obj.mental_scorecard = obj.score - random.choice([0, 1, 2])
+
+        if obj.mental_scorecard < 0:
+            obj.mental_scorecard = 1
+        obj.save()
 
 
 def create_par_3_par(hole):
@@ -66,6 +102,10 @@ def create_par_4_birdie(hole):
     ShotFactory(hole=hole, user=hole.user, start_distance=380, lie="tee")
     ShotFactory(hole=hole, user=hole.user, start_distance=100, lie="fairway")
     ShotFactory(hole=hole, user=hole.user, start_distance=2, lie="green")
+
+
+def create_par_4_hole_in_one(hole):
+    ShotFactory(hole=hole, user=hole.user, start_distance=300, lie="tee")
 
 
 def create_par_4_bogey(hole):

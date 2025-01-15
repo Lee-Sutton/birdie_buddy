@@ -16,6 +16,9 @@ class Round(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(18)]
     )
 
+    def strokes_gained_driving(self):
+        pass
+
 
 class Hole(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
@@ -31,13 +34,24 @@ class Hole(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(18)]
     )
 
+    par = models.IntegerField(validators=[MinValueValidator(2), MaxValueValidator(6)])
+
     @property
     def strokes_gained(self):
         first_shot = self.shot_set.first()
-        return (
-            avg_strokes_to_holeout(first_shot.start_distance, first_shot.lie)
-            - self.score
-        )
+        return first_shot.avg_strokes_to_holeout - self.score
+
+    @property
+    def strokes_gained_driving(self):
+        if self.par < 4:
+            return 0
+        shots = self.shot_set.all()
+        if shots.count() == 1:
+            return shots[0].avg_strokes_to_holeout
+        return shots[0].avg_strokes_to_holeout - shots[1].avg_strokes_to_holeout
+
+    def __str__(self):
+        return str([shot.start_distance for shot in self.shot_set.all()])
 
 
 class Shot(models.Model):
@@ -58,3 +72,7 @@ class Shot(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(1000)]
     )
     lie = models.CharField(max_length=20, choices=LIE_CHOICES, null=True)
+
+    @property
+    def avg_strokes_to_holeout(self):
+        return avg_strokes_to_holeout(self.start_distance, self.lie)

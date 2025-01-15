@@ -12,7 +12,7 @@ def signup_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect("home")
+            return redirect("round_entry:home")
         messages.error(request, "Unsuccessful registration. Invalid information.")
     else:
         form = SignUpForm()
