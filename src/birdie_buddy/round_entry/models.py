@@ -1,9 +1,12 @@
+from typing import Self
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 from birdie_buddy.round_entry.services import avg_strokes_to_holeout
+
+APPROACH_SHOT_START_DISTANCE = 30
 
 User = get_user_model()
 
@@ -16,8 +19,13 @@ class Round(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(18)]
     )
 
+    @property
     def strokes_gained_driving(self):
-        pass
+        result = 0
+        for hole in self.hole_set.all():
+            result = result + hole.strokes_gained_driving
+
+        return result
 
 
 class Hole(models.Model):
@@ -48,13 +56,26 @@ class Hole(models.Model):
         shots = self.shot_set.all()
         if shots.count() == 1:
             return shots[0].avg_strokes_to_holeout
-        return shots[0].avg_strokes_to_holeout - shots[1].avg_strokes_to_holeout
+        return shots[0].strokes_gained(shots[1])
+
+    @property
+    def strokes_gained_approach(self):
+        result = 0
+        shots = list(self.shot_set.all())
+
+        for i, shot in enumerate(shots):
+            if shot.is_approach_shot:
+                next_shot = shots[i + 1] if i + 1 < len(shots) else None
+                result = result + shot.strokes_gained(next_shot)
+
+        return result
 
     def __str__(self):
         return str([shot.start_distance for shot in self.shot_set.all()])
 
 
 class Shot(models.Model):
+    # TODO: refactor to an enum
     LIE_CHOICES = [
         ("tee", "Tee"),
         ("fairway", "Fairway"),
@@ -76,3 +97,16 @@ class Shot(models.Model):
     @property
     def avg_strokes_to_holeout(self):
         return avg_strokes_to_holeout(self.start_distance, self.lie)
+
+    def strokes_gained(self, next_shot: Self | None):
+        if next_shot is None:
+            return self.avg_strokes_to_hole
+        return self.avg_strokes_to_holeout - next_shot.avg_strokes_to_holeout - 1
+
+    @property
+    def is_approach_shot(self):
+        approach_lies = ["fairway", "rough", "sand"]
+        return (
+            self.start_distance > APPROACH_SHOT_START_DISTANCE
+            and self.lie in approach_lies
+        )

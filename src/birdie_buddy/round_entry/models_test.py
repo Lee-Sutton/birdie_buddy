@@ -19,7 +19,7 @@ class TestStrokesGained:
 class TestStrokesGainedDriving:
     def test_driver_gained(self, db):
         hole: Hole = HoleFactory.par_4_par()
-        expected_sg = 3.99 - 2.88  # 3.99 from 400 yds tee - 2.88 from 130 in FW
+        expected_sg = 3.99 - 2.88 - 1  # 3.99 from 400 yds tee - 2.88 from 130 in FW
         assert hole.strokes_gained_driving == pytest.approx(expected_sg)
 
     def test_returns_0_if_tee_shot_is_approach(self, db):
@@ -30,3 +30,18 @@ class TestStrokesGainedDriving:
     def test_hole_in_one(self, db):
         hole: Hole = HoleFactory.par_4_hole_in_one()
         assert hole.strokes_gained_driving == pytest.approx(3.714)
+
+
+class TestStrokesGainedApproach:
+    def test_sg_approach(self, db):
+        hole: Hole = HoleFactory.par_4_par()
+
+        expected_sg = 2.88 - 1.78 - 1  # 130 yds from fairway to 15 feet on green
+        assert hole.strokes_gained_approach == expected_sg
+
+    def test_sg_approach_multiple_approach_shots(self, db):
+        hole: Hole = HoleFactory.par_5_par()
+
+        # 250, 100, 15
+        expected_sg = (3.595 - 2.98 - 1) + (2.98 - 1.78 - 1)
+        assert hole.strokes_gained_approach == expected_sg

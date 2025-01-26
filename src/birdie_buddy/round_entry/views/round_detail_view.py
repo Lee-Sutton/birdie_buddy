@@ -12,5 +12,5 @@ class RoundDetailView(LoginRequiredMixin, View):
         return render(
             request,
             "round_entry/round_detail.html",
-            {"round": round, "holes": round.hole_set.all()},
+            {"round": round, "holes": round.hole_set.all(), "round": round},
         )

@@ -42,6 +42,15 @@ class HoleFactory(factory.django.DjangoModelFactory):
         HoleFactory._adjust_scores_based_on_shots(obj)
         return obj
 
+    @classmethod
+    def par_5_par(cls) -> Hole:
+        obj = cls(par=4)
+        obj.shot_set.all().delete()
+        obj.refresh_from_db()
+        create_par_5_par(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+        return obj
+
     @staticmethod
     def create_shots(obj, create, extracted, **kwargs):
         if not create:
