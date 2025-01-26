@@ -45,8 +45,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_approach >= 0.2 %}text-green-600 {% elif hole.strokes_gained_approach < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
                                     {{ hole.strokes_gained_approach|floatformat:2 }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_driving >= 0.2 %}text-green-600 {% elif hole.strokes_gained_driving < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_driving|floatformat:2 }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_around_the_green >= 0.2 %}text-green-600 {% elif hole.strokes_gained_around_the_green < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                    {{ hole.strokes_gained_around_the_green|floatformat:2 }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_putting >= 0.2 %}text-green-600 {% elif hole.strokes_gained_putting < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
                                     {{ hole.strokes_gained_putting|floatformat:2 }}
@@ -72,8 +72,8 @@
                 <h3 class="text-lg font-semibold text-gray-900">Performance Overview</h3>
             </div>
             <div class="p-6">
-                <div id="radar-chart" class="h-96">
-                    <p class="text-center text-gray-500">Radar chart showing performance metrics will be displayed here</p>
+                <div class="h-96" x-data="radarChart()" x-init="initChart()">
+                    <canvas id="radarChartCanvas"></canvas>
                 </div>
             </div>
         </div>
@@ -142,4 +142,53 @@
             </div>
         </div>
     </div>
+    <script>
+        function radarChart() {
+            console.log({
+                                data: [
+                                    {{ round.strokes_gained_driving }},
+                                    {{ round.strokes_gained_approach }},
+                                    {{ round.strokes_gained_putting }},
+                                    {{ round.strokes_gained_around_the_green }}
+                                ],
+            })
+            return {
+                initChart() {
+                    const ctx = document.getElementById('radarChartCanvas').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['Driving', 'Approach', 'Putting', 'Around the Green'],
+                            datasets: [{
+                                label: 'Strokes Gained',
+                                data: [
+                                    {{ round.strokes_gained_driving }},
+                                    {{ round.strokes_gained_approach }},
+                                    {{ round.strokes_gained_putting }},
+                                    {{ round.strokes_gained_around_the_green }}
+                                ],
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: { display: false },
+                            },
+                            scales: {
+                                r: {
+                                    angleLines: {
+                                        display: false
+                                    },
+                                    suggestedMin: -2,
+                                    suggestedMax: 2
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
 {% endblock %}

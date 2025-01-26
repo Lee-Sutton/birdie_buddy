@@ -19,6 +19,24 @@ class Round(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(18)]
     )
 
+    @property
+    def strokes_gained_driving(self):
+        return sum([hole.strokes_gained_driving for hole in self.hole_set.all()])
+
+    @property
+    def strokes_gained_approach(self):
+        return sum([hole.strokes_gained_approach for hole in self.hole_set.all()])
+
+    @property
+    def strokes_gained_putting(self):
+        return sum([hole.strokes_gained_putting for hole in self.hole_set.all()])
+
+    @property
+    def strokes_gained_around_the_green(self):
+        return sum(
+            [hole.strokes_gained_around_the_green for hole in self.hole_set.all()]
+        )
+
 
 class Hole(models.Model):
     created_at = models.DateTimeField(default=timezone.now)

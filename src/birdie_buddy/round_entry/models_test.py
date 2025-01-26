@@ -1,6 +1,7 @@
 from birdie_buddy.round_entry.factories.hole_factory import (
     HoleFactory,
 )
+from birdie_buddy.round_entry.factories.round_factory import RoundFactory
 from birdie_buddy.round_entry.models import Hole
 import pytest
 
@@ -14,6 +15,31 @@ class TestStrokesGained:
 
         hole = HoleFactory.par_3_par()
         assert hole.strokes_gained == pytest.approx(0.085)
+
+
+class TestRound:
+
+    @pytest.mark.parametrize(
+        "attr",
+        [
+            "strokes_gained_driving",
+            "strokes_gained_approach",
+            "strokes_gained_putting",
+            "strokes_gained_around_the_green",
+        ],
+    )
+    def test_round_strokes_gained(self, attr, db):
+        round = RoundFactory()
+
+        hole: Hole = HoleFactory.par_4_par()
+        hole.round = round
+        hole.save()
+
+        hole2 = HoleFactory.par_5_par()
+        hole2.round = round
+        hole2.save()
+
+        assert getattr(round, attr) == getattr(hole, attr) + getattr(hole2, attr)
 
 
 class TestStrokesGainedDriving:
