@@ -2,6 +2,7 @@ import pytest
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from pytest_django.asserts import assertRedirects, assertTemplateUsed
+from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
 from birdie_buddy.round_entry.models import Round, Hole, Shot
 
@@ -10,12 +11,12 @@ User = get_user_model()
 
 @pytest.fixture
 def round(user):
-    return RoundFactory(user=user)
+    return RoundFactory(user=user, holes_played=18)
 
 
 @pytest.fixture
 def hole(round, user):
-    return Hole.objects.create(user=user, round=round, number=1, score=3)
+    return HoleFactory(user=user, round=round, number=1, score=3)
 
 
 @pytest.mark.django_db
@@ -115,9 +116,7 @@ class TestCreateShotsView:
         other_round = RoundFactory(
             user=other_user,
         )
-        other_hole = Hole.objects.create(
-            user=other_user, round=other_round, number=1, score=3
-        )
+        other_hole = HoleFactory(user=other_user, round=other_round, number=1, score=3)
 
         url = reverse(
             "round_entry:create_shots",

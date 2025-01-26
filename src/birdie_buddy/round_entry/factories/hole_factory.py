@@ -43,6 +43,15 @@ class HoleFactory(factory.django.DjangoModelFactory):
         return obj
 
     @classmethod
+    def par_4_eagle(cls) -> Hole:
+        obj = cls(par=4)
+        obj.shot_set.all().delete()
+        obj.refresh_from_db()
+        create_par_4_eagle(obj)
+        HoleFactory._adjust_scores_based_on_shots(obj)
+        return obj
+
+    @classmethod
     def par_5_par(cls) -> Hole:
         obj = cls(par=4)
         obj.shot_set.all().delete()
@@ -51,11 +60,9 @@ class HoleFactory(factory.django.DjangoModelFactory):
         HoleFactory._adjust_scores_based_on_shots(obj)
         return obj
 
-    @staticmethod
-    def create_shots(obj, create, extracted, **kwargs):
-        if not create:
-            return
-
+    @classmethod
+    def create_with_shots(cls, **kwargs):
+        obj = cls(**kwargs)
         # Random selection of realistic golf scenarios
         scenarios = {
             2: [create_par_3_birdie],
@@ -111,6 +118,11 @@ def create_par_4_birdie(hole):
     ShotFactory(hole=hole, user=hole.user, start_distance=380, lie="tee")
     ShotFactory(hole=hole, user=hole.user, start_distance=100, lie="fairway")
     ShotFactory(hole=hole, user=hole.user, start_distance=2, lie="green")
+
+
+def create_par_4_eagle(hole):
+    ShotFactory(hole=hole, user=hole.user, start_distance=380, lie="tee")
+    ShotFactory(hole=hole, user=hole.user, start_distance=100, lie="fairway")
 
 
 def create_par_4_hole_in_one(hole):

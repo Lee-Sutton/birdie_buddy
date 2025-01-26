@@ -48,8 +48,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_driving >= 0.2 %}text-green-600 {% elif hole.strokes_gained_driving < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
                                     {{ hole.strokes_gained_driving|floatformat:2 }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_driving >= 0.2 %}text-green-600 {% elif hole.strokes_gained_driving < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_driving|floatformat:2 }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_putting >= 0.2 %}text-green-600 {% elif hole.strokes_gained_putting < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                    {{ hole.strokes_gained_putting|floatformat:2 }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained >= 0.2 %}text-green-600 {% elif hole.strokes_gained < -0.2 %}text-red-600 {% else %}text-gray-900{% endif %}">
                                     {{ hole.strokes_gained|floatformat:2 }}

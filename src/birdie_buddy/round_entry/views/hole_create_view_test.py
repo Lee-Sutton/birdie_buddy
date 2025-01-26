@@ -32,6 +32,7 @@ class TestHoleCreateView:
         data = {
             "score": 4,
             "mental_scorecard": 4,
+            "par": 4,
         }
 
         response = authenticated_client.post(url, data)

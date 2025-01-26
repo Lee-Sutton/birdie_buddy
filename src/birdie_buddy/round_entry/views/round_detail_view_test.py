@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from birdie_buddy.round_entry.factories.full_round_factory import full_round_factory
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
 from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
 
@@ -17,9 +18,7 @@ class TestRoundDetailView:
 
     def test_get_round_detail(self, authenticated_client, user):
         """Test successful round detail retrieval"""
-        round = RoundFactory(user=user)
-        HoleFactory.create_batch(18, round=round)
-
+        round = full_round_factory(user=user)
         url = reverse("round_entry:round_detail", kwargs={"id": round.id})
         response = authenticated_client.get(url)
 

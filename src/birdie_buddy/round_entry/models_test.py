@@ -29,7 +29,7 @@ class TestStrokesGainedDriving:
 
     def test_hole_in_one(self, db):
         hole: Hole = HoleFactory.par_4_hole_in_one()
-        assert hole.strokes_gained_driving == pytest.approx(3.714)
+        assert hole.strokes_gained_driving == pytest.approx(2.714)
 
 
 class TestStrokesGainedApproach:
@@ -42,6 +42,18 @@ class TestStrokesGainedApproach:
     def test_sg_approach_multiple_approach_shots(self, db):
         hole: Hole = HoleFactory.par_5_par()
 
-        # 250, 100, 15
         expected_sg = (3.595 - 2.98 - 1) + (2.98 - 1.78 - 1)
         assert hole.strokes_gained_approach == expected_sg
+
+    def test_sg_approach_holeout(self, db):
+        hole: Hole = HoleFactory.par_4_eagle()
+
+        assert hole.strokes_gained_approach == 1.75
+
+
+class TestStrokesGainedPutting:
+    def test_sg_putting(self, db):
+        hole: Hole = HoleFactory.par_4_par()
+
+        expected_sg = 1.78 - 1.04 - 1 + 1.04 - 1
+        assert hole.strokes_gained_putting == expected_sg

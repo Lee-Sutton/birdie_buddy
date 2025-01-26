@@ -8,3 +8,4 @@ class RoundFactory(factory.django.DjangoModelFactory):
         model = Round
 
     user = factory.SubFactory(UserFactory)
+    holes_played = factory.Faker("random_int", min=1, max=18)
