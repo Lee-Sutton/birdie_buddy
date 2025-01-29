@@ -71,10 +71,10 @@
             <div class="px-6 py-4 border-b">
                 <h3 class="text-lg font-semibold text-gray-900">Performance Overview</h3>
             </div>
-            <div class="p-6">
-                <div class="h-96" x-data="radarChart()" x-init="initChart()">
-                    <canvas id="radarChartCanvas"></canvas>
-                </div>
+            <div class="h-[32rem] justify-items-center"
+                 x-data="radarChart()"
+                 x-init="initChart()">
+                <canvas id="radarChartCanvas" class="w-full h-full"></canvas>
             </div>
         </div>
         <!--Analytics Section-->
@@ -144,51 +144,47 @@
     </div>
     <script>
         function radarChart() {
-            console.log({
-                                data: [
-                                    {{ round.strokes_gained_driving }},
-                                    {{ round.strokes_gained_approach }},
-                                    {{ round.strokes_gained_putting }},
-                                    {{ round.strokes_gained_around_the_green }}
-                                ],
-            })
             return {
-                initChart() {
-                    const ctx = document.getElementById('radarChartCanvas').getContext('2d');
-                    new Chart(ctx, {
-                        type: 'radar',
-                        data: {
-                            labels: ['Driving', 'Approach', 'Putting', 'Around the Green'],
-                            datasets: [{
-                                label: 'Strokes Gained',
-                                data: [
-                                    {{ round.strokes_gained_driving }},
-                                    {{ round.strokes_gained_approach }},
-                                    {{ round.strokes_gained_putting }},
-                                    {{ round.strokes_gained_around_the_green }}
-                                ],
-                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            plugins: {
-                                legend: { display: false },
+        initChart() {
+            const ctx = document.getElementById('radarChartCanvas').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Driving', 'Approach', 'Putting', 'Around the Green'],
+                    datasets: [{
+                        label: 'Strokes Gained',
+                        data: [
+                            {{ round.strokes_gained_driving }},
+                            {{ round.strokes_gained_approach }},
+                            {{ round.strokes_gained_putting }},
+                            {{ round.strokes_gained_around_the_green }}
+                        ],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
                             },
-                            scales: {
-                                r: {
-                                    angleLines: {
-                                        display: false
-                                    },
-                                    suggestedMin: -2,
-                                    suggestedMax: 2
+                            suggestedMin: -2,
+                            suggestedMax: 2,
+                            pointLabels: {
+                                font: {
                                 }
                             }
                         }
-                    });
+                    }
                 }
-            }
+            });
+        }
+                }
         }
     </script>
-{% endblock %}
+{% endblock content %}
