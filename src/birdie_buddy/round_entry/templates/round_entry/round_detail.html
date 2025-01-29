@@ -73,7 +73,7 @@
             </div>
             <div class="h-[32rem] justify-items-center"
                  x-data="radarChart()"
-                 x-init="initChart()">
+                 x-init="initChart(  [ {{ round.strokes_gained_driving }}, {{ round.strokes_gained_approach }}, {{ round.strokes_gained_putting }}, {{ round.strokes_gained_around_the_green }} ] )">
                 <canvas id="radarChartCanvas" class="w-full h-full"></canvas>
             </div>
         </div>
@@ -142,49 +142,4 @@
             </div>
         </div>
     </div>
-    <script>
-        function radarChart() {
-            return {
-        initChart() {
-            const ctx = document.getElementById('radarChartCanvas').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Driving', 'Approach', 'Putting', 'Around the Green'],
-                    datasets: [{
-                        label: 'Strokes Gained',
-                        data: [
-                            {{ round.strokes_gained_driving }},
-                            {{ round.strokes_gained_approach }},
-                            {{ round.strokes_gained_putting }},
-                            {{ round.strokes_gained_around_the_green }}
-                        ],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: { display: false },
-                    },
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: false
-                            },
-                            suggestedMin: -2,
-                            suggestedMax: 2,
-                            pointLabels: {
-                                font: {
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-                }
-        }
-    </script>
 {% endblock content %}
