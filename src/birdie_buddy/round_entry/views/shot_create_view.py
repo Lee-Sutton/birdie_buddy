@@ -32,9 +32,15 @@ class ShotCreateView(LoginRequiredMixin, View):
         hole = get_object_or_404(
             Hole, user=self.request.user, number=number, round_id=id
         )
+        shots = [
+            {"start_distance": shot.start_distance, "lie": shot.lie}
+            for shot in hole.shot_set.all()
+        ]
 
         ShotFormSet = formset_factory(ShotForm, extra=0)
-        formset = ShotFormSet(initial=[{} for _ in range(hole.score)])
+        formset = ShotFormSet(
+            initial=[get_from_list(shots, i, {}) for i in range(hole.score)]
+        )
         helper = ShotFormSetHelper()
 
         return render(
@@ -54,3 +60,10 @@ class ShotCreateView(LoginRequiredMixin, View):
         return reverse(
             "round_entry:create_hole", kwargs={"id": id, "number": number + 1}
         )
+
+
+def get_from_list(lst, idx, default=None):
+    try:
+        return lst[idx]
+    except IndexError:
+        return default

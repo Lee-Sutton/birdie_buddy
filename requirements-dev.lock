@@ -13,8 +13,14 @@
 asgiref==3.8.1
     # via django
     # via django-htmx
+click==8.2.1
+    # via djlint
+colorama==0.4.6
+    # via djlint
 crispy-tailwind==1.0.3
     # via birdie-buddy
+cssbeautifier==1.15.4
+    # via djlint
 django==5.1.4
     # via birdie-buddy
     # via crispy-tailwind
@@ -29,14 +35,25 @@ django-extensions==3.2.3
 django-htmx==1.21.0
     # via birdie-buddy
 django-types==0.20.0
+djlint==1.36.4
+editorconfig==0.17.1
+    # via cssbeautifier
+    # via jsbeautifier
 factory-boy==3.3.1
 faker==33.1.0
     # via factory-boy
 iniconfig==2.0.0
     # via pytest
 invoke==2.2.0
+jsbeautifier==1.15.4
+    # via cssbeautifier
+    # via djlint
+json5==0.12.0
+    # via djlint
 packaging==24.2
     # via pytest
+pathspec==0.12.1
+    # via djlint
 pluggy==1.5.0
     # via pytest
 pytest==8.3.4
@@ -44,10 +61,18 @@ pytest==8.3.4
 pytest-django==4.9.0
 python-dateutil==2.9.0.post0
     # via faker
+pyyaml==6.0.2
+    # via djlint
+regex==2024.11.6
+    # via djlint
 six==1.17.0
+    # via cssbeautifier
+    # via jsbeautifier
     # via python-dateutil
 sqlparse==0.5.3
     # via django
+tqdm==4.67.1
+    # via djlint
 types-psycopg2==2.9.21.20241019
     # via django-types
 typing-extensions==4.12.2

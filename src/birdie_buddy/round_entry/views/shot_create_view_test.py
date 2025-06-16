@@ -96,7 +96,6 @@ class TestCreateShotsView:
         assert shots[2].hole == hole
         assert shots[2].user == user
 
-
         # Verify redirect
         assert response.status_code == 302
         assertRedirects(
@@ -142,3 +141,23 @@ class TestCreateShotsView:
         )
         response = authenticated_client.get(url)
         assert response.status_code == 404
+
+    def test_get_returns_form_with_initial_values(
+        self, authenticated_client, user, round, hole
+    ):
+        url = reverse(
+            "round_entry:create_shots", kwargs={"id": round.id, "number": hole.number}
+        )
+        # Create initial shots for the hole
+        Shot.objects.create(
+            hole=hole, user=round.user, start_distance=150, lie="fairway"
+        )
+        Shot.objects.create(hole=hole, user=round.user, start_distance=50, lie="green")
+
+        response = authenticated_client.get(url)
+        assert response.status_code == 200
+        formset = response.context["formset"]
+        # Should have as many forms as hole.score
+        assert formset.total_form_count() == hole.score
+        assert formset.forms[0].initial == {"start_distance": 150, "lie": "fairway"}
+        assert formset.forms[1].initial == {"start_distance": 50, "lie": "green"}

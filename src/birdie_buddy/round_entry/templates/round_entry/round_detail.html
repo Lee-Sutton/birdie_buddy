@@ -55,7 +55,7 @@
                                     {{ hole.strokes_gained|floatformat:2 }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <a href=""
+                                    <a href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}"
                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
                                         Edit Hole
                                     </a>
