@@ -4,7 +4,8 @@ from django.views.generic.base import View
 from django.forms import formset_factory
 
 from birdie_buddy.round_entry.forms import ShotForm, ShotFormSetHelper
-from birdie_buddy.round_entry.models import Hole, Round, Shot
+from birdie_buddy.round_entry.models import Hole, Round
+from birdie_buddy.round_entry.services.shot_service import ShotService
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -17,16 +18,7 @@ class ShotCreateView(LoginRequiredMixin, View):
         formset = ShotFormSet(request.POST)
 
         if formset.is_valid():
-            # Delete existing shots for the current hole
-            Shot.objects.filter(hole=hole, user=request.user).delete()
-
-            for form in formset:
-                if form.is_valid():
-                    shot = form.save(commit=False)
-                    shot.hole = hole
-                    shot.user = request.user
-                    shot.save()
-
+            ShotService.create_shots_for_hole(hole, request.user, formset)
             url = self.get_success_url(hole.round, id, number)
             return redirect(url)
 
