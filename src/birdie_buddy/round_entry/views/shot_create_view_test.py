@@ -53,6 +53,11 @@ class TestCreateShotsView:
             "round_entry:create_shots", kwargs={"id": round.id, "number": hole.number}
         )
 
+        # Create some initial shots for the hole
+        Shot.objects.create(hole=hole, user=user, start_distance=100, lie="fairway")
+        Shot.objects.create(hole=hole, user=user, start_distance=50, lie="green")
+        assert Shot.objects.count() == 2
+
         # Prepare formset data
         data = {
             "form-TOTAL_FORMS": "3",
@@ -69,15 +74,28 @@ class TestCreateShotsView:
 
         response = authenticated_client.post(url, data)
 
-        # Check if shots were created
+        # Check if shots were created and old ones deleted
         assert Shot.objects.count() == 3
-        shots = Shot.objects.all()
+        shots = Shot.objects.filter(hole=hole, user=user).order_by("start_distance")
 
-        # Verify first shot
-        assert shots[0].start_distance == 400
-        assert shots[0].lie == "tee"
+        # Verify first shot (new)
+        assert shots[0].start_distance == 10
+        assert shots[0].lie == "green"
         assert shots[0].hole == hole
         assert shots[0].user == user
+
+        # Verify second shot (new)
+        assert shots[1].start_distance == 100
+        assert shots[1].lie == "rough"
+        assert shots[1].hole == hole
+        assert shots[1].user == user
+
+        # Verify third shot (new)
+        assert shots[2].start_distance == 400
+        assert shots[2].lie == "tee"
+        assert shots[2].hole == hole
+        assert shots[2].user == user
+
 
         # Verify redirect
         assert response.status_code == 302
