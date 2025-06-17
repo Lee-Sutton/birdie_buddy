@@ -18,7 +18,6 @@ class TestStrokesGained:
 
 
 class TestRound:
-
     @pytest.mark.parametrize(
         "attr",
         [
@@ -75,6 +74,11 @@ class TestStrokesGainedApproach:
         hole: Hole = HoleFactory.par_4_eagle()
 
         assert hole.strokes_gained_approach == 1.75
+
+    def test_sg_par_3(self, db):
+        hole: Hole = HoleFactory.par_3_par()
+        assert hole.strokes_gained_driving == 0
+        assert hole.strokes_gained_approach == pytest.approx(0.215)
 
 
 class TestStrokesGainedPutting:

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from birdie_buddy.round_entry.services import avg_strokes_to_holeout
 
 APPROACH_SHOT_START_DISTANCE = 30
+TEE_SHOT_START_DISTANCE = 250
 
 User = get_user_model()
 
@@ -126,20 +127,27 @@ class Shot(models.Model):
 
     @property
     def is_approach_shot(self):
-        approach_lies = ["fairway", "rough", "sand"]
-        return (
-            self.start_distance > APPROACH_SHOT_START_DISTANCE
+        approach_lies = ["tee", "fairway", "rough", "sand"]
+        result = (
+            self.start_distance is not None
+            and self.start_distance <= TEE_SHOT_START_DISTANCE
+            and self.start_distance > APPROACH_SHOT_START_DISTANCE
             and self.lie in approach_lies
         )
+        return result
 
     @property
     def is_short_game_shot(self):
         short_game_lies = ["fairway", "rough", "sand"]
         return (
-            self.start_distance <= APPROACH_SHOT_START_DISTANCE
+            self.start_distance is not None
+            and self.start_distance <= APPROACH_SHOT_START_DISTANCE
             and self.lie in short_game_lies
         )
 
     @property
     def is_putt(self):
         return self.lie == "green"
+
+    def __str__(self):
+        return str(self.start_distance)
