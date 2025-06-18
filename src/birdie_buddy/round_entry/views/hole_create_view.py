@@ -1,7 +1,6 @@
 from django import forms
-from django.views.generic import CreateView, View
+from django.views.generic import View
 from django.urls import reverse
-from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -24,7 +23,6 @@ class HoleCreateView(LoginRequiredMixin, View):
         return render(request, "round_entry/hole_form.html", {"form": form, **context})
 
     def post(self, request, id, number):
-        # TODO: add test for updating the hole
         hole = self.get_object()
         form = HoleForm(request.POST, instance=hole)
 
