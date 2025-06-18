@@ -32,7 +32,18 @@ class HoleCreateView(LoginRequiredMixin, CreateView, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["number"] = self.kwargs["number"]
+        number = self.kwargs["number"]
+        id = self.kwargs["id"]
+
+        context["number"] = number
+        context["id"] = id
+        if number > 1:
+            context["previous"] = reverse(
+                "round_entry:create_shots",
+                kwargs={"id": id, "number": number - 1},
+            )
+        else:
+            context["previous"] = reverse("round_entry:create_round")
         return context
 
     def get_success_url(self):

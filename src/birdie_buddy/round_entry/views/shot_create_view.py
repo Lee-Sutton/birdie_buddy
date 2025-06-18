@@ -50,6 +50,9 @@ class ShotCreateView(LoginRequiredMixin, View):
                 "formset": formset,
                 "helper": helper,
                 "number": number,
+                "previous": reverse(
+                    "round_entry:create_hole", kwargs={"id": id, "number": number}
+                ),
             },
         )
 
