@@ -11,9 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ShotCreateView(LoginRequiredMixin, View):
     def post(self, request, id, number):
-        hole: Hole = get_object_or_404(
-            Hole, user=self.request.user, number=number, round_id=id
-        )
+        hole = self.get_hole()
         ShotFormSet = formset_factory(ShotForm, extra=0)
         formset = ShotFormSet(request.POST)
 
@@ -22,16 +20,10 @@ class ShotCreateView(LoginRequiredMixin, View):
             url = self.get_success_url(hole.round, id, number)
             return redirect(url)
 
-        return render(
-            request,
-            "round_entry/shots_form.html",
-            {"formset": formset, "helper": ShotFormSetHelper(), "number": number},
-        )
+        return self.render(formset, hole)
 
     def get(self, request, id, number):
-        hole = get_object_or_404(
-            Hole, user=self.request.user, number=number, round_id=id
-        )
+        hole = self.get_hole()
         shots = [
             {"start_distance": shot.start_distance, "lie": shot.lie}
             for shot in hole.shot_set.all()
@@ -43,13 +35,43 @@ class ShotCreateView(LoginRequiredMixin, View):
         )
         helper = ShotFormSetHelper()
 
+        number = self.kwargs["number"]
+        id = self.kwargs["id"]
         return render(
-            request,
+            self.request,
             "round_entry/shots_form.html",
             {
                 "formset": formset,
-                "helper": helper,
-                "number": number,
+                "complete": hole.round.complete,
+                "helper": ShotFormSetHelper(),
+                "number": self.kwargs["number"],
+                "id": self.kwargs["id"],
+                "previous": reverse(
+                    "round_entry:create_hole", kwargs={"id": id, "number": number}
+                ),
+            },
+        )
+
+    def get_hole(self):
+        number = self.kwargs["number"]
+        id = self.kwargs["id"]
+
+        return get_object_or_404(
+            Hole, user=self.request.user, number=number, round_id=id
+        )
+
+    def render(self, formset, hole):
+        number = self.kwargs["number"]
+        id = self.kwargs["id"]
+        return render(
+            self.request,
+            "round_entry/shots_form.html",
+            {
+                "formset": formset,
+                "complete": hole.round.complete,
+                "helper": ShotFormSetHelper(),
+                "number": self.kwargs["number"],
+                "id": self.kwargs["id"],
                 "previous": reverse(
                     "round_entry:create_hole", kwargs={"id": id, "number": number}
                 ),
@@ -65,6 +87,7 @@ class ShotCreateView(LoginRequiredMixin, View):
         )
 
 
+# TODO: extract to utils
 def get_from_list(lst, idx, default=None):
     try:
         return lst[idx]

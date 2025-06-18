@@ -2,6 +2,7 @@ from birdie_buddy.round_entry.factories.hole_factory import (
     HoleFactory,
 )
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
+from birdie_buddy.round_entry.factories.shot_factory import ShotFactory
 from birdie_buddy.round_entry.models import Hole
 import pytest
 
@@ -39,6 +40,30 @@ class TestRound:
         hole2.save()
 
         assert getattr(round, attr) == getattr(hole, attr) + getattr(hole2, attr)
+
+    def test_complete_true_when_all_holes_have_shots(self, db, user):
+        round = RoundFactory(user=user, holes_played=2)
+        hole1 = HoleFactory(round=round, user=user, number=1)
+        hole2 = HoleFactory(round=round, user=user, number=2)
+        ShotFactory(hole=hole1, user=user)
+        ShotFactory(hole=hole2, user=user)
+
+        assert round.complete is True
+
+    def test_complete_is_false_if_hole_is_missing_shots(self, db, user):
+        round = RoundFactory(user=user, holes_played=2)
+        hole1 = HoleFactory(round=round, user=user, number=1)
+        hole2 = HoleFactory(round=round, user=user, number=2)
+        ShotFactory(hole=hole1, user=user)
+
+        assert round.complete is False
+
+    def test_complete_false_if_not_enough_holes(self, db, user):
+        round = RoundFactory(user=user, holes_played=2)
+        hole1 = HoleFactory(round=round, user=user, number=1)
+        ShotFactory(hole=hole1, user=user)
+
+        assert round.complete is False
 
 
 class TestStrokesGainedDriving:

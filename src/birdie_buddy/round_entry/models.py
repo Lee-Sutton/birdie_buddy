@@ -38,6 +38,13 @@ class Round(models.Model):
             [hole.strokes_gained_around_the_green for hole in self.hole_set.all()]
         )
 
+    @property
+    def complete(self):
+        holes = self.hole_set.annotate(num_shots=models.Count("shot")).filter(
+            num_shots__gte=1
+        )
+        return holes.count() == self.holes_played
+
 
 class Hole(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
