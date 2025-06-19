@@ -11,6 +11,7 @@ dependencies = [
     "crispy-tailwind>=1.0.3",
     "django-htmx>=1.21.0",
     "django-extensions>=3.2.3",
+    "django-cotton>=2.1.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

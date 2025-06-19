@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     "crispy_forms",
     "django_htmx",
     "django_extensions",
+    "django_cotton",
     "crispy_tailwind",
     "birdie_buddy.round_entry",
     "birdie_buddy.users",
+    "birdie_buddy.components",
 ]
 
 MIDDLEWARE = [

@@ -18,9 +18,12 @@ crispy-tailwind==1.0.3
 django==5.1.4
     # via birdie-buddy
     # via crispy-tailwind
+    # via django-cotton
     # via django-crispy-forms
     # via django-extensions
     # via django-htmx
+django-cotton==2.1.2
+    # via birdie-buddy
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
