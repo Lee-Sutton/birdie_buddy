@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: birdie_buddy
+      POSTGRES_USER: birdie_user
+      POSTGRES_PASSWORD: birdie_pass
+    ports:
+      - "6432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:

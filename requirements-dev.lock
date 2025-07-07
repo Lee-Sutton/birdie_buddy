@@ -33,6 +33,8 @@ django-cotton==2.1.2
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
+django-environ==0.12.0
+    # via birdie-buddy
 django-extensions==3.2.3
     # via birdie-buddy
 django-htmx==1.21.0
@@ -59,6 +61,8 @@ pathspec==0.12.1
     # via djlint
 pluggy==1.5.0
     # via pytest
+psycopg2-binary==2.9.10
+    # via birdie-buddy
 pytest==8.3.4
     # via pytest-django
 pytest-django==4.9.0
