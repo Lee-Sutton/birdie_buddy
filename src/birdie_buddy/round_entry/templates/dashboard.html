@@ -1,3 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="max-w-4xl mx-auto py-8">
+  <h1 class="text-2xl font-semibold mb-4">Dashboard</h1>
+  <a href="{% url 'round_entry:round_list' %}" class="text-blue-600 underline">View your rounds</a>
+</div>
 {% endblock content %}

@@ -5,6 +5,7 @@ app_name = "round_entry"
 
 urlpatterns = [
     path("", views.home, name="home"),
+    path("rounds/", views.RoundListView.as_view(), name="round_list"),
     path("rounds/create", views.RoundCreateView.as_view(), name="create_round"),
     path(
         "rounds/<int:id>/holes/<int:number>/create",
