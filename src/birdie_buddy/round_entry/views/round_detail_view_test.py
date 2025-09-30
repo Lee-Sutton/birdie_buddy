@@ -29,19 +29,18 @@ class TestRoundDetailView:
 
     def test_incomplete_round_shows_continue(self, authenticated_client, user):
         """Incomplete rounds render the continue button with correct href"""
-        # Create a round with no holes (incomplete)
-        round = RoundFactory(user=user, holes_played=0)
+        round = RoundFactory(user=user, holes_played=18)
         url = reverse("round_entry:round_detail", kwargs={"id": round.id})
         response = authenticated_client.get(url)
 
         assert response.status_code == 200
-        # Ensure show_stats is False
         assert response.context["show_stats"] is False
         # continue_href should be in context and point to create_hole for hole 1
         assert "continue_href" in response.context
-        expected = reverse("round_entry:create_hole", kwargs={"id": round.id, "number": 1})
+        expected = reverse(
+            "round_entry:create_hole", kwargs={"id": round.id, "number": 1}
+        )
         assert response.context["continue_href"] == expected
-        # The rendered content should contain the link href
         assert expected in response.content.decode()
 
     def test_get_round_detail_wrong_user(self, authenticated_client):
