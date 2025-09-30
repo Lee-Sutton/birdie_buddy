@@ -8,9 +8,12 @@ from birdie_buddy.round_entry.models import Round
 class RoundDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         round: Round = get_object_or_404(Round, pk=id, user=request.user)
+        holes = round.hole_set.all()
 
-        return render(
-            request,
-            "round_entry/round_detail.html",
-            {"round": round, "holes": round.hole_set.all(), "round": round},
-        )
+        context = {
+            "round": round,
+            "holes": holes,
+            "show_stats": round.complete,
+        }
+
+        return render(request, "round_entry/round_detail.html", context)
