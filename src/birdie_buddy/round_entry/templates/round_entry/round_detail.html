@@ -21,7 +21,7 @@
             <h3 class="text-lg font-semibold text-yellow-800">Round Incomplete</h3>
             <p class="text-sm text-yellow-700 mt-2">This round is incomplete. Add hole data to view analytics and stats.</p>
             <div class="mt-4">
-                <a href="{% url 'round_entry:create_hole' id=round.id number=1 %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Continue Round (Hole 1)</a>
+                <c-a-button severity="primary" href="{% url 'round_entry:create_hole' id=round.id number=1 %}">Complete Round</c-a-button>
             </div>
         </div>
         {% else %}
