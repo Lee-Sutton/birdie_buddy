@@ -10,6 +10,9 @@ Tech stack
 Styling
 - Use tailwind to create modern styling similar to tailwind ui
 
+Testing
+- Prefer pytest. Look for other test files for examples
+
 Build / Run / Test
 - Install dev deps: `rye sync` (project uses `rye` in pyproject.toml).
 - Run app: `rye run python manage.py runserver` (or `python manage.py runserver`).
