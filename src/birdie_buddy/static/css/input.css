@@ -16,6 +16,11 @@
   }
 }
 
+/* Hide elements with x-cloak until Alpine initializes */
+[x-cloak] {
+  display: none !important;
+}
+
 select ~ .pointer-events-none {
   display: none !important;
 }
