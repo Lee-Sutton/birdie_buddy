@@ -4,6 +4,7 @@ from .hole_create_view import HoleCreateView
 from .shot_create_view import ShotCreateView
 from .round_detail_view import RoundDetailView
 from .round_list_view import RoundListView
+from .stats_view import stats_view
 
 __all__ = [
     "RoundCreateView",
@@ -11,6 +12,7 @@ __all__ = [
     "ShotCreateView",
     "RoundDetailView",
     "RoundListView",
+    "stats_view",
 ]
 
 
