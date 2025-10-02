@@ -22,7 +22,7 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj = cls(par=4)
         obj.shot_set.all().delete()
         create_par_4_hole_in_one(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
@@ -30,7 +30,7 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj = cls(par=3)
         obj.shot_set.all().delete()
         create_par_3_par(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
@@ -39,7 +39,7 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_4_par(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
@@ -48,7 +48,7 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_4_eagle(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
@@ -57,7 +57,7 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_5_par(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
@@ -77,16 +77,25 @@ class HoleFactory(factory.django.DjangoModelFactory):
         }
 
         random.choice(scenarios[obj.par])(obj)
-        HoleFactory._adjust_scores_based_on_shots(obj)
+        HoleFactory._adjust_score_and_sg(obj)
 
     @staticmethod
-    def _adjust_scores_based_on_shots(obj):
+    def _adjust_score_and_sg(obj):
         obj.score = obj.shot_set.count()
         obj.mental_scorecard = obj.score - random.choice([0, 1, 2])
 
         if obj.mental_scorecard < 0:
             obj.mental_scorecard = 1
         obj.save()
+        obj.refresh_from_db()
+
+        for shot in obj.shot_set.all():
+            try:
+                next_shot = shot.get_next_shot()
+                shot.calculate_strokes_gained(next_shot)
+            except KeyError:
+                shot.strokes_gained = 0
+            shot.save()
 
 
 def create_par_3_par(hole):

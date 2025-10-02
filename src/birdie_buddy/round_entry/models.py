@@ -73,8 +73,8 @@ class Hole(models.Model):
             return 0
         shots = self.shot_set.all()
         if shots.count() == 1:
-            return shots[0].strokes_gained(None)
-        return shots[0].strokes_gained(shots[1])
+            return shots[0].calculate_strokes_gained(None)
+        return shots[0].calculate_strokes_gained(shots[1])
 
     @property
     def strokes_gained_approach(self):
@@ -82,7 +82,12 @@ class Hole(models.Model):
 
     @property
     def strokes_gained_putting(self):
-        return self._calculate_strokes_gained(lambda s: s.is_putt)
+        result = 0
+
+        for putt in self.shot_set.filter(shot_type="putt"):
+            result = result + putt.strokes_gained
+
+        return result
 
     @property
     def strokes_gained_around_the_green(self):
@@ -95,7 +100,7 @@ class Hole(models.Model):
         for i, shot in enumerate(shots):
             if conditional(shot):
                 next_shot = shots[i + 1] if i + 1 < len(shots) else None
-                result = result + shot.strokes_gained(next_shot)
+                result = result + shot.calculate_strokes_gained(next_shot)
 
         return result
 
@@ -115,6 +120,13 @@ class Shot(models.Model):
         ("green", "Green"),
     ]
 
+    SHOT_TYPE_CHOICES = [
+        ("drive", "Drive"),
+        ("approach", "Approach"),
+        ("around_green", "Around the Green"),
+        ("putt", "Putt"),
+    ]
+
     created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     hole = models.ForeignKey(Hole, on_delete=models.CASCADE)
@@ -122,15 +134,46 @@ class Shot(models.Model):
         null=True, validators=[MinValueValidator(1), MaxValueValidator(1000)]
     )
     lie = models.CharField(max_length=20, choices=LIE_CHOICES, null=True)
+    strokes_gained = models.FloatField(null=True)
+    shot_type = models.CharField(max_length=16, choices=SHOT_TYPE_CHOICES, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.is_putt:
+            self.shot_type = "putt"
+        elif self.is_short_game_shot:
+            self.shot_type = "around_green"
+        elif self.is_approach_shot:
+            self.shot_type = "approach"
+        elif self.is_tee_shot:
+            self.shot_type = "drive"
+        else:
+            self.shot_type = None
+        super().save(*args, **kwargs)
 
     @property
     def avg_strokes_to_holeout(self):
         return avg_strokes_to_holeout(self.start_distance, self.lie)
 
-    def strokes_gained(self, next_shot: Self | None):
+    def calculate_strokes_gained(self, next_shot: Self | None):
         if next_shot is None:
-            return self.avg_strokes_to_holeout - 1
-        return self.avg_strokes_to_holeout - next_shot.avg_strokes_to_holeout - 1
+            self.strokes_gained = self.avg_strokes_to_holeout - 1
+        else:
+            self.strokes_gained = (
+                self.avg_strokes_to_holeout - next_shot.avg_strokes_to_holeout - 1
+            )
+        return self.strokes_gained
+
+    def get_next_shot(self):
+        shots = list(self.hole.shot_set.order_by("id"))
+        try:
+            idx = shots.index(self)
+            return shots[idx + 1] if idx + 1 < len(shots) else None
+        except ValueError:
+            return None
+
+    @property
+    def is_tee_shot(self):
+        return self.lie == "tee" and not self.is_approach_shot
 
     @property
     def is_approach_shot(self):
@@ -157,4 +200,4 @@ class Shot(models.Model):
         return self.lie == "green"
 
     def __str__(self):
-        return str(self.start_distance)
+        return f"{self.lie} - {self.start_distance} - {self.strokes_gained}"

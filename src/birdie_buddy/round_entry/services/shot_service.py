@@ -2,6 +2,7 @@ from birdie_buddy.round_entry.models import Shot, Hole
 from django.contrib.auth.models import User
 from django.forms import BaseFormSet
 
+
 class ShotService:
     @staticmethod
     def create_shots_for_hole(hole: Hole, user: User, formset: BaseFormSet):
@@ -13,14 +14,18 @@ class ShotService:
         Shot.objects.filter(hole=hole, user=user).delete()
 
         # Create new shots
-        shots_created = []
+        shots_created: list[Shot] = []
         if formset.is_valid():
             for form in formset:
                 if form.is_valid():
-                    shot = form.save(commit=False)
+                    shot: Shot = form.save(commit=False)
                     shot.hole = hole
                     shot.user = user
-                    shot.save()
                     shots_created.append(shot)
-        return shots_created
 
+        for i, shot in enumerate(shots_created):
+            next_shot = shots_created[i + 1] if i + 1 < len(shots_created) else None
+            shot.calculate_strokes_gained(next_shot)
+            shot.save()
+
+        return shots_created

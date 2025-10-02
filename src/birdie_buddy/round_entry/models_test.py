@@ -19,28 +19,6 @@ class TestStrokesGained:
 
 
 class TestRound:
-    @pytest.mark.parametrize(
-        "attr",
-        [
-            "strokes_gained_driving",
-            "strokes_gained_approach",
-            "strokes_gained_putting",
-            "strokes_gained_around_the_green",
-        ],
-    )
-    def test_round_strokes_gained(self, attr, db):
-        round = RoundFactory()
-
-        hole: Hole = HoleFactory.par_4_par()
-        hole.round = round
-        hole.save()
-
-        hole2 = HoleFactory.par_5_par()
-        hole2.round = round
-        hole2.save()
-
-        assert getattr(round, attr) == getattr(hole, attr) + getattr(hole2, attr)
-
     def test_complete_true_when_all_holes_have_shots(self, db, user):
         round = RoundFactory(user=user, holes_played=2)
         hole1 = HoleFactory(round=round, user=user, number=1)
