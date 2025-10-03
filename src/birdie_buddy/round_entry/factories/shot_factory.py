@@ -7,6 +7,7 @@ from birdie_buddy.users.factories import UserFactory
 class ShotFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Shot
+        skip_postgeneration_save = True
 
     created_at = factory.LazyFunction(timezone.now)
     user = factory.SubFactory(UserFactory)

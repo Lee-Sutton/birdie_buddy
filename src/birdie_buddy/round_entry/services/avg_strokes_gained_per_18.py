@@ -1,5 +1,5 @@
 from django.db.models import Sum
-from birdie_buddy.round_entry.models import Hole
+from birdie_buddy.round_entry.models import Hole, Shot
 from collections import namedtuple
 
 StrokesGainedCategories = namedtuple(
@@ -8,21 +8,39 @@ StrokesGainedCategories = namedtuple(
 
 
 def get_avg_strokes_gained_categories_per_18(user):
-    holes = Hole.objects.filter(user=user, score__isnull=False)
-    total_holes = holes.count()
+    shots = Shot.objects.filter(user=user, strokes_gained__isnull=False)
+    total_holes = shots.values("hole").distinct().count()
     if total_holes == 0:
         return StrokesGainedCategories(0, 0, 0, 0)
 
-    agg = holes.aggregate(
-        driving=Sum("strokes_gained_driving"),
-        approach=Sum("strokes_gained_approach"),
-        short_game=Sum("strokes_gained_around_the_green"),
-        putting=Sum("strokes_gained_putting"),
+    driving = (
+        shots.filter(shot_type="drive").aggregate(Sum("strokes_gained"))[
+            "strokes_gained__sum"
+        ]
+        or 0
+    )
+    approach = (
+        shots.filter(shot_type="approach").aggregate(Sum("strokes_gained"))[
+            "strokes_gained__sum"
+        ]
+        or 0
+    )
+    short_game = (
+        shots.filter(shot_type="around_green").aggregate(Sum("strokes_gained"))[
+            "strokes_gained__sum"
+        ]
+        or 0
+    )
+    putting = (
+        shots.filter(shot_type="putt").aggregate(Sum("strokes_gained"))[
+            "strokes_gained__sum"
+        ]
+        or 0
     )
 
     return StrokesGainedCategories(
-        (agg["driving"] or 0) / total_holes * 18,
-        (agg["approach"] or 0) / total_holes * 18,
-        (agg["short_game"] or 0) / total_holes * 18,
-        (agg["putting"] or 0) / total_holes * 18,
+        driving / total_holes * 18,
+        approach / total_holes * 18,
+        short_game / total_holes * 18,
+        putting / total_holes * 18,
     )

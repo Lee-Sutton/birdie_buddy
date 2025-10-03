@@ -18,24 +18,24 @@ class HoleFactory(factory.django.DjangoModelFactory):
     par = factory.Faker("random_int", min=2, max=6)
 
     @classmethod
-    def par_4_hole_in_one(cls) -> Hole:
-        obj = cls(par=4)
+    def par_4_hole_in_one(cls, **kwargs) -> Hole:
+        obj = cls(par=4, **kwargs)
         obj.shot_set.all().delete()
         create_par_4_hole_in_one(obj)
         HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
-    def par_3_par(cls) -> Hole:
-        obj = cls(par=3)
+    def par_3_par(cls, **kwargs) -> Hole:
+        obj = cls(par=3, **kwargs)
         obj.shot_set.all().delete()
         create_par_3_par(obj)
         HoleFactory._adjust_score_and_sg(obj)
         return obj
 
     @classmethod
-    def par_4_par(cls) -> Hole:
-        obj = cls(par=4)
+    def par_4_par(cls, **kwargs) -> Hole:
+        obj = cls(par=4, **kwargs)
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_4_par(obj)
@@ -43,8 +43,17 @@ class HoleFactory(factory.django.DjangoModelFactory):
         return obj
 
     @classmethod
-    def par_4_eagle(cls) -> Hole:
-        obj = cls(par=4)
+    def par_4_missed_green(cls, **kwargs) -> Hole:
+        obj = cls(par=4, **kwargs)
+        obj.shot_set.all().delete()
+        obj.refresh_from_db()
+        create_par_4_missed_green(obj)
+        HoleFactory._adjust_score_and_sg(obj)
+        return obj
+
+    @classmethod
+    def par_4_eagle(cls, **kwargs) -> Hole:
+        obj = cls(par=4, **kwargs)
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_4_eagle(obj)
@@ -52,8 +61,8 @@ class HoleFactory(factory.django.DjangoModelFactory):
         return obj
 
     @classmethod
-    def par_5_par(cls) -> Hole:
-        obj = cls(par=4)
+    def par_5_par(cls, **kwargs) -> Hole:
+        obj = cls(par=4, **kwargs)
         obj.shot_set.all().delete()
         obj.refresh_from_db()
         create_par_5_par(obj)
@@ -121,6 +130,13 @@ def create_par_4_par(hole):
     ShotFactory(hole=hole, user=hole.user, start_distance=130, lie="fairway")
     ShotFactory(hole=hole, user=hole.user, start_distance=15, lie="green")
     ShotFactory(hole=hole, user=hole.user, start_distance=1, lie="green")
+
+
+def create_par_4_missed_green(hole):
+    ShotFactory(hole=hole, user=hole.user, start_distance=400, lie="tee")
+    ShotFactory(hole=hole, user=hole.user, start_distance=150, lie="fairway")
+    ShotFactory(hole=hole, user=hole.user, start_distance=20, lie="rough")
+    ShotFactory(hole=hole, user=hole.user, start_distance=4, lie="green")
 
 
 def create_par_4_birdie(hole):
