@@ -24,7 +24,7 @@
 -->
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <div class="min-h-full">
-            <nav class="bg-gray-800" x-data="{ mobileOpen: false }">
+            <nav class="bg-gray-800">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 items-center justify-between">
                         <div class="flex items-center">
@@ -135,20 +135,33 @@
                         </div>
                         <div class="-mr-2 flex md:hidden">
                             <!-- Mobile menu button -->
-                            <button x-on:click="mobileOpen = !mobileOpen"
-                                    x-bind:aria-expanded="mobileOpen"
+                            <button onclick="toggleMobileMenu()"
                                     type="button"
                                     class="h-12 w-12 flex items-center justify-center rounded-md bg-gray-800 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                    aria-controls="mobile-menu">
+                                    aria-controls="mobile-menu"
+                                    aria-expanded="false"
+                                    id="mobile-menu-button">
                                 <span class="sr-only">Open main menu</span>
-
                                 <!-- Menu (hamburger) icon -->
-                                <svg x-show="!mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <svg id="hamburger-icon"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-6 w-6 text-white"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
-
                                 <!-- Close (X) icon -->
-                                <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <svg id="close-icon"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-6 w-6 text-white hidden"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
@@ -156,16 +169,7 @@
                     </div>
                 </div>
                 <!-- Mobile menu, show/hide based on menu state. -->
-                <div x-show="mobileOpen"
-                     x-cloak
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="transform opacity-0 scale-95"
-                     x-transition:enter-end="transform opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="transform opacity-100 scale-100"
-                     x-transition:leave-end="transform opacity-0 scale-95"
-                     class="md:hidden"
-                     id="mobile-menu">
+                <div class="md:hidden hidden" id="mobile-menu">
                     <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                         <a href="#"
@@ -205,5 +209,28 @@
                 </div>
             </main>
         </div>
+        <script>
+            let mobileMenuOpen = false;
+
+            function toggleMobileMenu() {
+                mobileMenuOpen = !mobileMenuOpen;
+                const mobileMenu = document.getElementById('mobile-menu');
+                const hamburgerIcon = document.getElementById('hamburger-icon');
+                const closeIcon = document.getElementById('close-icon');
+                const menuButton = document.getElementById('mobile-menu-button');
+                
+                if (mobileMenuOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    hamburgerIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                    menuButton.setAttribute('aria-expanded', 'true');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                    menuButton.setAttribute('aria-expanded', 'false');
+                }
+            }
+        </script>
     </body>
 </html>
