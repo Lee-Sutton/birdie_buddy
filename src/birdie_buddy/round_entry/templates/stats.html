@@ -36,11 +36,11 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiger.penalties|floatformat:2 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiger.double_bogeys|floatformat:2 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiger.three_putts|floatformat:2 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiger.bogeys_inside_150|floatformat:2 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiger.two_chip|floatformat:2 }}</td>
                         </tr>
                     </tbody>
                 </table>
