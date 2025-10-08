@@ -136,6 +136,7 @@ class Shot(models.Model):
     lie = models.CharField(max_length=20, choices=LIE_CHOICES, null=True)
     strokes_gained = models.FloatField(null=True)
     shot_type = models.CharField(max_length=16, choices=SHOT_TYPE_CHOICES, null=True)
+    number = models.IntegerField(validators=[MinValueValidator(1)])
 
     def save(self, *args, **kwargs):
         if self.is_putt:
@@ -200,4 +201,4 @@ class Shot(models.Model):
         return self.lie == "green"
 
     def __str__(self):
-        return f"{self.lie} - {self.start_distance} - {self.strokes_gained}"
+        return f"{self.shot_type} - {self.start_distance}"

@@ -25,6 +25,7 @@ class ShotService:
 
         for i, shot in enumerate(shots_created):
             next_shot = shots_created[i + 1] if i + 1 < len(shots_created) else None
+            shot.number = i + 1
             shot.calculate_strokes_gained(next_shot)
             shot.save()
 

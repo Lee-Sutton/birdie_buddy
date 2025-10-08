@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from pytest_django.asserts import assertRedirects, assertTemplateUsed
 from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
+from birdie_buddy.round_entry.factories.shot_factory import ShotFactory
 from birdie_buddy.round_entry.models import Round, Hole, Shot
 
 User = get_user_model()
@@ -54,8 +55,8 @@ class TestCreateShotsView:
         )
 
         # Create some initial shots for the hole
-        Shot.objects.create(hole=hole, user=user, start_distance=100, lie="fairway")
-        Shot.objects.create(hole=hole, user=user, start_distance=50, lie="green")
+        ShotFactory(hole=hole, user=user, start_distance=100, lie="fairway", number=1)
+        ShotFactory(hole=hole, user=user, start_distance=50, lie="green", number=2)
         assert Shot.objects.count() == 2
 
         # Prepare formset data
@@ -149,10 +150,12 @@ class TestCreateShotsView:
             "round_entry:create_shots", kwargs={"id": round.id, "number": hole.number}
         )
         # Create initial shots for the hole
-        Shot.objects.create(
-            hole=hole, user=round.user, start_distance=150, lie="fairway"
+        ShotFactory(
+            hole=hole, user=round.user, start_distance=150, lie="fairway", number=1
         )
-        Shot.objects.create(hole=hole, user=round.user, start_distance=50, lie="green")
+        ShotFactory(
+            hole=hole, user=round.user, start_distance=50, lie="green", number=2
+        )
 
         response = authenticated_client.get(url)
         assert response.status_code == 200

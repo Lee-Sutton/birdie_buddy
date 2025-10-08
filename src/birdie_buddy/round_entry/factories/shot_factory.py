@@ -18,6 +18,7 @@ class ShotFactory(factory.django.DjangoModelFactory):
     lie = factory.Faker(
         "random_element", elements=[choice[0] for choice in Shot.LIE_CHOICES]
     )
+    number = factory.Faker("random_int", min=1, max=10)
 
     @factory.post_generation
     def calculate_sg(self, create, extracted, **kwargs):

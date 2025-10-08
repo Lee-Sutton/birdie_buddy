@@ -98,7 +98,8 @@ class HoleFactory(factory.django.DjangoModelFactory):
         obj.save()
         obj.refresh_from_db()
 
-        for shot in obj.shot_set.all():
+        for i, shot in enumerate(obj.shot_set.all()):
+            shot.number = i + 1
             try:
                 next_shot = shot.get_next_shot()
                 shot.calculate_strokes_gained(next_shot)
