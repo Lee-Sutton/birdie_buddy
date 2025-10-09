@@ -16,6 +16,7 @@ class DrivingStats(NamedTuple):
     """
 
     penalties_per_18: float
+    rough_per_18: float
 
 
 class DrivingStatsService:
@@ -54,8 +55,34 @@ class DrivingStatsService:
         # Scale to per 18 holes
         return (penalty_holes / total_driving_holes) * 18
 
+    def rough_per_18(self, user) -> float:
+        """
+        Calculates the number of tee shots that end up in the rough per 18 holes.
+        Only considers par 4 and par 5 holes where the second shot is from the rough.
+        """
+        # Count holes with rough second shots on par 4/5s
+        rough_holes = (
+            Hole.objects.filter(
+                user=user, par__in=[4, 5], shot__number=2, shot__lie="rough"
+            )
+            .distinct()
+            .count()
+        )
+
+        # Total par 4/5 holes played
+        total_driving_holes = Hole.objects.filter(user=user, par__in=[4, 5]).count()
+
+        if total_driving_holes == 0:
+            return 0.0
+
+        # Scale to per 18 holes
+        return (rough_holes / total_driving_holes) * 18
+
     def get_for_user(self, user) -> DrivingStats:
         """
         Returns all driving statistics for a user.
         """
-        return DrivingStats(penalties_per_18=self.penalties_per_18(user))
+        return DrivingStats(
+            penalties_per_18=self.penalties_per_18(user),
+            rough_per_18=self.rough_per_18(user),
+        )
