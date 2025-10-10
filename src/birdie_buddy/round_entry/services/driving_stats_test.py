@@ -202,3 +202,95 @@ class TestDrivingStatsService:
         # Should have rough_per_18 field populated
         assert hasattr(stats, "rough_per_18")
         assert stats.rough_per_18 == 18.0  # 1 rough out of 1 hole = 18 per 18
+
+    def test_fairways_per_18_no_holes(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        assert service.fairways_per_18(user) == 0.0
+
+    def test_fairways_per_18_no_fairways(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        round = RoundFactory(user=user)
+
+        # Par 4 hole with rough second shot
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole1, number=2, lie="rough", start_distance=200)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=50)
+
+        # Par 5 hole with penalty second shot
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=550)
+        ShotFactory(user=user, hole=hole2, number=2, lie="penalty", start_distance=550)
+        ShotFactory(user=user, hole=hole2, number=3, lie="fairway", start_distance=300)
+
+        assert service.fairways_per_18(user) == 0.0
+
+    def test_fairways_per_18_with_fairways(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        round = RoundFactory(user=user)
+
+        # Par 4 hole with fairway second shot
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=10)
+
+        # Par 5 hole with fairway second shot
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=550)
+        ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=250)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=100)
+
+        # Par 4 hole with rough second shot (no fairway)
+        hole3 = HoleFactory(user=user, round=round, par=4, number=3)
+        ShotFactory(user=user, hole=hole3, number=1, lie="tee", start_distance=380)
+        ShotFactory(user=user, hole=hole3, number=2, lie="rough", start_distance=200)
+        ShotFactory(user=user, hole=hole3, number=3, lie="green", start_distance=50)
+
+        # Par 3 hole with fairway (should be ignored)
+        hole4 = HoleFactory(user=user, round=round, par=3, number=4)
+        ShotFactory(user=user, hole=hole4, number=1, lie="tee", start_distance=180)
+        ShotFactory(user=user, hole=hole4, number=2, lie="fairway", start_distance=10)
+
+        # 2 fairway holes out of 3 par 4/5 holes
+        # Expected: (2/3) * 18 = 12.0
+        expected_fairways = (2 / 3) * 18
+        assert service.fairways_per_18(user) == pytest.approx(expected_fairways)
+
+    def test_fairways_per_18_partial_round(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        round = RoundFactory(user=user)
+
+        # Only 2 holes played, 1 with fairway
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=550)
+        ShotFactory(user=user, hole=hole2, number=2, lie="rough", start_distance=300)
+
+        # 1 fairway hole out of 2 par 4/5 holes
+        # Expected: (1/2) * 18 = 9.0
+        expected_fairways = (1 / 2) * 18
+        assert service.fairways_per_18(user) == pytest.approx(expected_fairways)
+
+    def test_get_for_user_includes_fairways(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        round = RoundFactory(user=user)
+
+        # Par 4 hole with fairway second shot
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
+
+        stats = service.get_for_user(user)
+
+        # Should have fairways_per_18 field populated
+        assert hasattr(stats, "fairways_per_18")
+        assert stats.fairways_per_18 == 18.0  # 1 fairway out of 1 hole = 18 per 18
