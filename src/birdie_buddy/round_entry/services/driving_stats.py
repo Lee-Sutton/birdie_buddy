@@ -4,8 +4,6 @@ Services for driving stats.
 
 from typing import NamedTuple
 
-from django.db.models import Avg, F, Window
-from django.db.models.functions import Lead
 
 from birdie_buddy.round_entry.models import Hole, Shot
 
@@ -24,6 +22,9 @@ class DrivingStatsService:
     """
     A service to calculate driving stats for a user.
     """
+
+    # 14 drives are 18 per 18 holes on average
+    DRIVES_PER_18 = 14
 
     def _get_tee_shots(self, user):
         """
@@ -54,7 +55,7 @@ class DrivingStatsService:
             return 0.0
 
         # Scale to per 18 holes
-        return (lie_holes / total_driving_holes) * 18
+        return (lie_holes / total_driving_holes) * self.DRIVES_PER_18
 
     def penalties_per_18(self, user) -> float:
         """

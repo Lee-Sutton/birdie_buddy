@@ -12,7 +12,10 @@ from birdie_buddy.round_entry.factories import (
 
 from birdie_buddy.users.factories import UserFactory
 
-from birdie_buddy.round_entry.services.driving_stats import DrivingStatsService
+from birdie_buddy.round_entry.services.driving_stats import (
+    DrivingStats,
+    DrivingStatsService,
+)
 
 # pytestmark = pytest.mark.skip
 
@@ -73,7 +76,7 @@ class TestDrivingStatsService:
 
         # 2 penalty holes out of 3 par 4/5 holes
         # Expected: (2/3) * 18 = 12.0
-        expected_penalties = (2 / 3) * 18
+        expected_penalties = (2 / 3) * DrivingStatsService.DRIVES_PER_18
         assert service.penalties_per_18(user) == pytest.approx(expected_penalties)
 
     def test_penalties_per_18_partial_round(self):
@@ -92,7 +95,7 @@ class TestDrivingStatsService:
 
         # 1 penalty hole out of 2 par 4/5 holes
         # Expected: (1/2) * 18 = 9.0
-        expected_penalties = (1 / 2) * 18
+        expected_penalties = (1 / 2) * DrivingStatsService.DRIVES_PER_18
         assert service.penalties_per_18(user) == pytest.approx(expected_penalties)
 
     def test_get_for_user_includes_penalties(self):
@@ -109,7 +112,7 @@ class TestDrivingStatsService:
 
         # Should have penalties_per_18 field populated
         assert hasattr(stats, "penalties_per_18")
-        assert stats.penalties_per_18 == 18.0  # 1 penalty out of 1 hole = 18 per 18
+        assert stats.penalties_per_18 == DrivingStatsService.DRIVES_PER_18
 
     def test_rough_per_18_no_holes(self):
         user = UserFactory()
@@ -165,7 +168,7 @@ class TestDrivingStatsService:
 
         # 2 rough holes out of 3 par 4/5 holes
         # Expected: (2/3) * 18 = 12.0
-        expected_rough = (2 / 3) * 18
+        expected_rough = (2 / 3) * DrivingStatsService.DRIVES_PER_18
         assert service.rough_per_18(user) == pytest.approx(expected_rough)
 
     def test_rough_per_18_partial_round(self):
@@ -183,8 +186,8 @@ class TestDrivingStatsService:
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=250)
 
         # 1 rough hole out of 2 par 4/5 holes
-        # Expected: (1/2) * 18 = 9.0
-        expected_rough = (1 / 2) * 18
+        # Expected: (1/2) * 14 = 7
+        expected_rough = (1 / 2) * DrivingStatsService.DRIVES_PER_18
         assert service.rough_per_18(user) == pytest.approx(expected_rough)
 
     def test_get_for_user_includes_rough(self):
@@ -201,7 +204,7 @@ class TestDrivingStatsService:
 
         # Should have rough_per_18 field populated
         assert hasattr(stats, "rough_per_18")
-        assert stats.rough_per_18 == 18.0  # 1 rough out of 1 hole = 18 per 18
+        assert stats.rough_per_18 == DrivingStatsService.DRIVES_PER_18
 
     def test_fairways_per_18_no_holes(self):
         user = UserFactory()
@@ -257,7 +260,7 @@ class TestDrivingStatsService:
 
         # 2 fairway holes out of 3 par 4/5 holes
         # Expected: (2/3) * 18 = 12.0
-        expected_fairways = (2 / 3) * 18
+        expected_fairways = (2 / 3) * DrivingStatsService.DRIVES_PER_18
         assert service.fairways_per_18(user) == pytest.approx(expected_fairways)
 
     def test_fairways_per_18_partial_round(self):
@@ -276,7 +279,7 @@ class TestDrivingStatsService:
 
         # 1 fairway hole out of 2 par 4/5 holes
         # Expected: (1/2) * 18 = 9.0
-        expected_fairways = (1 / 2) * 18
+        expected_fairways = (1 / 2) * DrivingStatsService.DRIVES_PER_18
         assert service.fairways_per_18(user) == pytest.approx(expected_fairways)
 
     def test_get_for_user_includes_fairways(self):
@@ -293,4 +296,4 @@ class TestDrivingStatsService:
 
         # Should have fairways_per_18 field populated
         assert hasattr(stats, "fairways_per_18")
-        assert stats.fairways_per_18 == 18.0  # 1 fairway out of 1 hole = 18 per 18
+        assert stats.fairways_per_18 == DrivingStatsService.DRIVES_PER_18

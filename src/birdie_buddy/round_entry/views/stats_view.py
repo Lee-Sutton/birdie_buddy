@@ -10,7 +10,7 @@ from birdie_buddy.round_entry.services.driving_stats import DrivingStatsService
 def stats_view(req):
     stats = get_avg_strokes_gained_categories_per_18(req.user)
     tiger = TigerFiveService().get_for_user(req.user)
-    driving_distance = DrivingStatsService().average_distance(req.user)
+    driving_stats = DrivingStatsService().get_for_user(req.user)
     return render(
         req,
         "stats.html",
@@ -20,6 +20,6 @@ def stats_view(req):
             "strokes_gained_putting": stats.putting,
             "strokes_gained_around_the_green": stats.short_game,
             "tiger": tiger,
-            "driving_distance": driving_distance,
+            "driving_stats": driving_stats,
         },
     )
