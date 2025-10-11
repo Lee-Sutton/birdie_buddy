@@ -4,7 +4,7 @@ from birdie_buddy.round_entry.services.avg_strokes_gained_per_18 import (
     get_avg_strokes_gained_categories_per_18,
 )
 from birdie_buddy.round_entry.services.tiger_five import TigerFiveService
-from birdie_buddy.round_entry.services.driving_stats import DrivingStatsService
+from birdie_buddy.round_entry.services.driving_stats_service import DrivingStatsService
 
 
 def stats_view(req):

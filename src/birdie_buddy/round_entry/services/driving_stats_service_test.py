@@ -12,12 +12,9 @@ from birdie_buddy.round_entry.factories import (
 
 from birdie_buddy.users.factories import UserFactory
 
-from birdie_buddy.round_entry.services.driving_stats import (
-    DrivingStats,
+from birdie_buddy.round_entry.services.driving_stats_service import (
     DrivingStatsService,
 )
-
-# pytestmark = pytest.mark.skip
 
 
 @pytest.mark.django_db
