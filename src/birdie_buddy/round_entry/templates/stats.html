@@ -79,8 +79,9 @@
             <div class="mb-8 bg-white rounded-lg border shadow-sm">
                 <div class="px-6 py-4 border-b">
                     <h3 class="text-lg font-semibold text-gray-900">Approach</h3>
+                    <p class="text-sm text-gray-600 mt-1">Strokes gained per 18-hole round</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                     <!-- Approach - Fairway -->
                     <div class="overflow-x-auto bg-white rounded border">
                         <div class="px-6 py-4 border-b">
@@ -89,60 +90,26 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average Proximity (ft)</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage green hit</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes gained</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance (yds)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-50</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_30_100_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">50-75</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-150</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_100_150_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">75-100</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_150_200_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-125</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">125-150</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-175</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">175-200</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">200-225</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Over 200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_over_200_per_18|floatformat:2 }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -155,60 +122,26 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average Proximity (ft)</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage green hit</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes gained</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance (yds)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-50</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_30_100_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">50-75</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-150</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_100_150_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">75-100</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_150_200_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-125</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">125-150</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-175</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">175-200</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">200-225</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Over 200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_over_200_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                             </tbody>
                         </table>
