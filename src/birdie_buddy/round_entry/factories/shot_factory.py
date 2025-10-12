@@ -22,6 +22,8 @@ class ShotFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def calculate_sg(self, create, extracted, **kwargs):
+        if self.strokes_gained is not None:
+            return
         if not create:
             return
         try:
