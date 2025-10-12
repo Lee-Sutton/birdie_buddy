@@ -91,24 +91,29 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance (yds)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proximity (yds)</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_30_100|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_30_100_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-150</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_100_150|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_100_150_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_150_200|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_150_200_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Over 200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_over_200|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_over_200_per_18|floatformat:2 }}</td>
                                 </tr>
                             </tbody>
@@ -123,24 +128,29 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance (yds)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proximity (yds)</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_30_100_rough|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_30_100_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">100-150</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_100_150_rough|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_100_150_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">150-200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_150_200_rough|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_150_200_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Over 200</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.avg_proximity_over_200_rough|floatformat:1 }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ approach_stats.strokes_gained_over_200_rough_per_18|floatformat:2 }}</td>
                                 </tr>
                             </tbody>

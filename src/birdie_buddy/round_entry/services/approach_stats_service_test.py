@@ -816,3 +816,664 @@ class TestApproachShotService:
         )
         assert stats.strokes_gained_150_200_rough_per_18 == 0.0
         assert stats.strokes_gained_over_200_rough_per_18 == 0.0
+
+    def test_avg_proximity_30_100_no_approach_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole,
+            number=2,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.1,
+        )
+
+        assert service.avg_proximity_30_100(user) == 0.0
+
+    def test_avg_proximity_30_100_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=80,
+            strokes_gained=0.5,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=4, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=380,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="rough",
+            start_distance=90,
+            strokes_gained=-0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="green",
+            start_distance=15,
+            strokes_gained=0.2,
+        )
+
+        expected_avg = (10 + 15) / 2
+        assert service.avg_proximity_30_100(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_100_150_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=120,
+            strokes_gained=0.4,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=12,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="fairway",
+            start_distance=140,
+            strokes_gained=-0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=8,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (12 + 8) / 2
+        assert service.avg_proximity_100_150(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_150_200_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=180,
+            strokes_gained=0.6,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=20,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=170,
+            strokes_gained=-0.4,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=25,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (20 + 25) / 2
+        assert service.avg_proximity_150_200(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_over_200_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=220,
+            strokes_gained=0.7,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=30,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="tee",
+            start_distance=240,
+            strokes_gained=-0.5,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=35,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (30 + 35) / 2
+        assert service.avg_proximity_over_200(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_30_100_rough_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="rough",
+            start_distance=80,
+            strokes_gained=-0.4,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=18,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=4, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=380,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="rough",
+            start_distance=90,
+            strokes_gained=-0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="green",
+            start_distance=22,
+            strokes_gained=0.2,
+        )
+
+        hole3 = HoleFactory(user=user, round=round, par=4, number=3)
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=1,
+            lie="tee",
+            start_distance=390,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=2,
+            lie="fairway",
+            start_distance=85,
+            strokes_gained=0.5,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=0.1,
+        )
+
+        expected_avg = (18 + 22) / 2
+        assert service.avg_proximity_30_100_rough(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_100_150_rough_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="rough",
+            start_distance=120,
+            strokes_gained=-0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=20,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=140,
+            strokes_gained=-0.5,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=25,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (20 + 25) / 2
+        assert service.avg_proximity_100_150_rough(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_150_200_rough_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="rough",
+            start_distance=180,
+            strokes_gained=-0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=28,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=170,
+            strokes_gained=-0.6,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=32,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (28 + 32) / 2
+        assert service.avg_proximity_150_200_rough(user) == pytest.approx(expected_avg)
+
+    def test_avg_proximity_over_200_rough_with_shots(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="rough",
+            start_distance=220,
+            strokes_gained=-0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=35,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=240,
+            strokes_gained=-0.7,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=40,
+            strokes_gained=0.0,
+        )
+
+        expected_avg = (35 + 40) / 2
+        assert service.avg_proximity_over_200_rough(user) == pytest.approx(expected_avg)
+
+    def test_get_for_user_returns_proximity_stats(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=80,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.0,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=120,
+            strokes_gained=0.4,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=5,
+            strokes_gained=0.2,
+        )
+
+        stats = service.get_for_user(user)
+
+        assert hasattr(stats, "avg_proximity_30_100")
+        assert hasattr(stats, "avg_proximity_100_150")
+        assert hasattr(stats, "avg_proximity_150_200")
+        assert hasattr(stats, "avg_proximity_over_200")
+        assert hasattr(stats, "avg_proximity_30_100_rough")
+        assert hasattr(stats, "avg_proximity_100_150_rough")
+        assert hasattr(stats, "avg_proximity_150_200_rough")
+        assert hasattr(stats, "avg_proximity_over_200_rough")
+
+        assert stats.avg_proximity_30_100 == pytest.approx(10.0)
+        assert stats.avg_proximity_100_150 == pytest.approx(5.0)
+        assert stats.avg_proximity_30_100_rough == 0.0
+        assert stats.avg_proximity_100_150_rough == pytest.approx(5.0)
+
