@@ -176,45 +176,45 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">0-10 (fairway)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_0_10_fairway|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_0_10_fairway|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_0_10_fairway_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">0-10 (rough)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_0_10_rough|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_0_10_rough|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_0_10_rough_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">10-20 (fairway)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_10_20_fairway|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_10_20_fairway|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_10_20_fairway_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">10-20 (rough)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_10_20_rough|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_10_20_rough|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_10_20_rough_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">20-30 (fairway)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_20_30_fairway|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_20_30_fairway|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_20_30_fairway_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">20-30 (rough)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_20_30_rough|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_20_30_rough|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_20_30_rough_per_18|floatformat:2 }}</td>
                             </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Sand</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.avg_proximity_sand|floatformat:1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.two_chip_pct_sand|floatformat:1 }}%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ short_game_stats.strokes_gained_sand_per_18|floatformat:2 }}</td>
                             </tr>
                         </tbody>
                     </table>
