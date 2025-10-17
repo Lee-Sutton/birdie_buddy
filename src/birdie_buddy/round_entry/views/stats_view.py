@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from birdie_buddy.round_entry.services.avg_strokes_gained_per_18 import (
     get_avg_strokes_gained_categories_per_18,
@@ -9,6 +10,7 @@ from birdie_buddy.round_entry.services.approach_stats_service import ApproachSho
 from birdie_buddy.round_entry.services.short_game_service import ShortGameService
 
 
+@login_required
 def stats_view(req):
     stats = get_avg_strokes_gained_categories_per_18(req.user)
     tiger = TigerFiveService().get_for_user(req.user)
