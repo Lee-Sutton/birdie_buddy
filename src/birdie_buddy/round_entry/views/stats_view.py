@@ -8,6 +8,7 @@ from birdie_buddy.round_entry.services.tiger_five import TigerFiveService
 from birdie_buddy.round_entry.services.driving_stats_service import DrivingStatsService
 from birdie_buddy.round_entry.services.approach_stats_service import ApproachShotService
 from birdie_buddy.round_entry.services.short_game_service import ShortGameService
+from birdie_buddy.round_entry.services.putting_stats_service import PuttingStatsService
 
 
 @login_required
@@ -17,6 +18,7 @@ def stats_view(req):
     driving_stats = DrivingStatsService().get_for_user(req.user)
     approach_stats = ApproachShotService().get_for_user(req.user)
     short_game_stats = ShortGameService().get_for_user(req.user)
+    putting_stats = PuttingStatsService().get_for_user(req.user)
     return render(
         req,
         "stats.html",
@@ -29,5 +31,6 @@ def stats_view(req):
             "driving_stats": driving_stats,
             "approach_stats": approach_stats,
             "short_game_stats": short_game_stats,
+            "putting_stats": putting_stats,
         },
     )
