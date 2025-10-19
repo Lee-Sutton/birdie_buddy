@@ -90,3 +90,49 @@ class TestStrokesGainedPutting:
 
         expected_sg = 1.78 - 1.04 - 1 + 1.04 - 1
         assert hole.strokes_gained_putting == expected_sg
+
+
+class TestShotDistanceConversion:
+    def test_yards_converted_to_feet(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=100, lie="fairway")
+        assert shot.yards == 100
+        assert shot.feet == 300
+
+    def test_feet_converted_to_yards_for_putts(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=15, lie="green")
+        assert shot.feet == 15
+        assert shot.yards == 5
+
+    def test_feet_to_yards_conversion(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=30, lie="green")
+        assert shot._feet_to_yards(30) == 10
+
+    def test_yards_to_feet_conversion(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=10, lie="fairway")
+        assert shot._yards_to_feet(10) == 30
+
+
+class TestShotTypeAutoDetection:
+    def test_putt_shot_type(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=10, lie="green")
+        assert shot.shot_type == "putt"
+
+    def test_drive_shot_type(self, db, user):
+        hole = HoleFactory(user=user, par=4)
+        shot = ShotFactory(hole=hole, user=user, start_distance=300, lie="tee")
+        assert shot.shot_type == "drive"
+
+    def test_approach_shot_type(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=150, lie="fairway")
+        assert shot.shot_type == "approach"
+
+    def test_around_green_shot_type(self, db, user):
+        hole = HoleFactory(user=user)
+        shot = ShotFactory(hole=hole, user=user, start_distance=20, lie="rough")
+        assert shot.shot_type == "around_green"

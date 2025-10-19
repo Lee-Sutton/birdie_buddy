@@ -137,8 +137,37 @@ class Shot(models.Model):
     strokes_gained = models.FloatField(null=True)
     shot_type = models.CharField(max_length=16, choices=SHOT_TYPE_CHOICES, null=True)
     number = models.IntegerField(validators=[MinValueValidator(1)])
+    yards = models.IntegerField(
+        null=True, validators=[MinValueValidator(1), MaxValueValidator(1000)]
+    )
+    feet = models.IntegerField(
+        null=True, validators=[MinValueValidator(1), MaxValueValidator(3000)]
+    )
 
     def save(self, *args, **kwargs):
+        self._parse_start_distance()
+        self._parse_shot_type()
+        super().save(*args, **kwargs)
+
+    def _feet_to_yards(self, feet: int | None) -> int | None:
+        if feet is None:
+            return None
+        return feet // 3
+
+    def _yards_to_feet(self, yards: int | None) -> int | None:
+        if yards is None:
+            return None
+        return yards * 3
+
+    def _parse_start_distance(self) -> int | None:
+        if self.is_putt:
+            self.feet = self.start_distance
+            self.yards = self._feet_to_yards(self.start_distance)
+        else:
+            self.yards = self.start_distance
+            self.feet = self._yards_to_feet(self.start_distance)
+
+    def _parse_shot_type(self):
         if self.is_putt:
             self.shot_type = "putt"
         elif self.is_short_game_shot:
@@ -149,7 +178,6 @@ class Shot(models.Model):
             self.shot_type = "drive"
         else:
             self.shot_type = None
-        super().save(*args, **kwargs)
 
     @property
     def avg_strokes_to_holeout(self):
