@@ -15,7 +15,7 @@ class ProximityCalculator:
     ) -> float:
         shots_with_next = Shot.objects.filter(user=user).annotate(
             next_distance=Window(
-                expression=Lead("start_distance"),
+                expression=Lead("feet"),
                 partition_by=[F("hole_id")],
                 order_by=F("id").asc(),
             )

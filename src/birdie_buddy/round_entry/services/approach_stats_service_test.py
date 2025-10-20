@@ -1476,4 +1476,3 @@ class TestApproachShotService:
         assert stats.avg_proximity_100_150 == pytest.approx(5.0)
         assert stats.avg_proximity_30_100_rough == 0.0
         assert stats.avg_proximity_100_150_rough == pytest.approx(5.0)
-
