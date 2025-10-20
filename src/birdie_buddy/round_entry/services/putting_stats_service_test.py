@@ -28,12 +28,12 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=0.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=1)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=0.8)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=2)
 
         assert service.make_rate_0_3(user) == 100.0
 
@@ -45,16 +45,16 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=0.5)
-        ShotFactory(user=user, hole=hole1, number=4, lie="green", start_distance=2.0)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=3)
+        ShotFactory(user=user, hole=hole1, number=4, lie="green", start_distance=4)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=0.8)
-        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=5.0)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=2)
+        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=4)
 
-        assert service.make_rate_0_3(user) == 0.0
+        assert service.make_rate_0_3(user) == 0
 
     def test_make_rate_0_3_some_made(self):
         user = UserFactory()
@@ -64,15 +64,15 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=0.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=2)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=0.8)
-        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=5.0)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=2)
+        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=1)
 
-        assert service.make_rate_0_3(user) == 50.0
+        assert service.make_rate_0_3(user) == pytest.approx(2 / 3 * 100)
 
     def test_make_rate_3_6(self):
         user = UserFactory()
@@ -82,13 +82,13 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=1.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=4)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=1.8)
-        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=0.2)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=5)
+        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=1)
 
         assert service.make_rate_3_6(user) == 50.0
 
@@ -100,7 +100,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=2.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=7.5)
 
         assert service.make_rate_6_9(user) == 100.0
 
@@ -112,7 +112,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=3.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=10.5)
 
         assert service.make_rate_9_12(user) == 100.0
 
@@ -124,7 +124,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=4.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=13.5)
 
         assert service.make_rate_12_15(user) == 100.0
 
@@ -136,7 +136,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=5.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=16.5)
 
         assert service.make_rate_15_20(user) == 100.0
 
@@ -148,7 +148,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=8.0)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=24.0)
 
         assert service.make_rate_20_30(user) == 100.0
 
@@ -160,7 +160,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=11.0)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=33.0)
 
         assert service.make_rate_30_40(user) == 100.0
 
@@ -172,7 +172,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=15.0)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=45.0)
 
         assert service.make_rate_40_plus(user) == 100.0
 
@@ -184,13 +184,13 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=5.0)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=15.0)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=8.0)
-        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=1.0)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=24.0)
+        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=3.0)
 
         assert service.make_rate_overall(user) == pytest.approx(66.66666666666666)
 
@@ -202,12 +202,12 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=0.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=2)
 
         hole2 = HoleFactory(user=user, round=round, par=4, number=2)
         ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=5.0)
+        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=15.0)
 
         assert service.make_rate_0_3(user) == 100.0
         assert service.make_rate_15_20(user) == 100.0
@@ -221,7 +221,7 @@ class TestPuttingStatsService:
         hole1 = HoleFactory(user=user, round=round, par=4, number=1)
         ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
         ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=0.5)
+        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=1.5)
 
         stats = service.get_for_user(user)
 

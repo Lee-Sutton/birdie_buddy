@@ -17,20 +17,14 @@ class PuttingStats(NamedTuple):
     make_rate_overall: float
 
 
-# TODO: fix the yards/feet confusion throughout
 class PuttingStatsService:
     def _get_make_rate_for_distance(
         self, user, min_feet: int, max_feet: int | None
     ) -> float:
-        min_yards = min_feet / 3
-        max_yards = max_feet / 3 if max_feet else None
+        putts = Shot.objects.filter(user=user, shot_type="putt", feet__gte=min_feet)
 
-        putts = Shot.objects.filter(
-            user=user, shot_type="putt", start_distance__gte=min_yards
-        )
-
-        if max_yards:
-            putts = putts.filter(start_distance__lt=max_yards)
+        if max_feet:
+            putts = putts.filter(feet__lt=max_feet)
 
         total_putts = putts.count()
 
