@@ -14,7 +14,6 @@ class PuttingStats(NamedTuple):
     make_rate_20_30: float
     make_rate_30_40: float
     make_rate_40_plus: float
-    make_rate_overall: float
 
 
 class PuttingStatsService:
@@ -66,9 +65,6 @@ class PuttingStatsService:
     def make_rate_40_plus(self, user) -> float:
         return self._get_make_rate_for_distance(user, 40, None)
 
-    def make_rate_overall(self, user) -> float:
-        return self._get_make_rate_for_distance(user, 0, None)
-
     def get_for_user(self, user) -> PuttingStats:
         return PuttingStats(
             make_rate_0_3=self.make_rate_0_3(user),
@@ -80,5 +76,4 @@ class PuttingStatsService:
             make_rate_20_30=self.make_rate_20_30(user),
             make_rate_30_40=self.make_rate_30_40(user),
             make_rate_40_plus=self.make_rate_40_plus(user),
-            make_rate_overall=self.make_rate_overall(user),
         )

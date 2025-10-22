@@ -176,24 +176,6 @@ class TestPuttingStatsService:
 
         assert service.make_rate_40_plus(user) == 100.0
 
-    def test_make_rate_overall(self):
-        user = UserFactory()
-        service = PuttingStatsService()
-        round = RoundFactory(user=user)
-
-        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
-        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
-        ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole1, number=3, lie="green", start_distance=15.0)
-
-        hole2 = HoleFactory(user=user, round=round, par=4, number=2)
-        ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=400)
-        ShotFactory(user=user, hole=hole2, number=2, lie="fairway", start_distance=150)
-        ShotFactory(user=user, hole=hole2, number=3, lie="green", start_distance=24.0)
-        ShotFactory(user=user, hole=hole2, number=4, lie="green", start_distance=3.0)
-
-        assert service.make_rate_overall(user) == pytest.approx(66.66666666666666)
-
     def test_make_rate_excludes_other_distance_ranges(self):
         user = UserFactory()
         service = PuttingStatsService()
@@ -234,5 +216,4 @@ class TestPuttingStatsService:
         assert hasattr(stats, "make_rate_20_30")
         assert hasattr(stats, "make_rate_30_40")
         assert hasattr(stats, "make_rate_40_plus")
-        assert hasattr(stats, "make_rate_overall")
         assert stats.make_rate_0_3 == 100.0
