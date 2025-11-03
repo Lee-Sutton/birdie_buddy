@@ -4,6 +4,7 @@ from birdie_buddy.round_entry.factories.hole_factory import (
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
 from birdie_buddy.round_entry.factories.shot_factory import ShotFactory
 from birdie_buddy.round_entry.models import Hole
+from django.core.exceptions import ValidationError
 import pytest
 
 
@@ -136,3 +137,23 @@ class TestShotTypeAutoDetection:
         hole = HoleFactory(user=user)
         shot = ShotFactory(hole=hole, user=user, start_distance=20, lie="rough")
         assert shot.shot_type == "around_green"
+
+
+class TestMentalScorecardValidation:
+    def test_mental_scorecard_cannot_exceed_score(self, db, user):
+        hole = HoleFactory(user=user, score=5, mental_scorecard=6, number=1)
+        with pytest.raises(ValidationError) as exc_info:
+            hole.full_clean()
+        assert "mental_scorecard" in exc_info.value.message_dict
+
+    def test_mental_scorecard_equal_to_score_is_valid(self, db, user):
+        hole = HoleFactory(user=user, score=5, mental_scorecard=5, number=1)
+        hole.full_clean()
+
+    def test_mental_scorecard_less_than_score_is_valid(self, db, user):
+        hole = HoleFactory(user=user, score=5, mental_scorecard=4, number=1)
+        hole.full_clean()
+
+    def test_mental_scorecard_none_is_valid(self, db, user):
+        hole = HoleFactory(user=user, score=5, number=1)
+        hole.full_clean()

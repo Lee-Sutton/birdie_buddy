@@ -1,4 +1,5 @@
 from typing import Self
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -61,6 +62,17 @@ class Hole(models.Model):
     )
 
     par = models.IntegerField(validators=[MinValueValidator(2), MaxValueValidator(6)])
+
+    def clean(self):
+        super().clean()
+        if (
+            self.mental_scorecard is not None
+            and self.score is not None
+            and self.mental_scorecard > self.score
+        ):
+            raise ValidationError(
+                {"mental_scorecard": "Mental scorecard cannot exceed actual score."}
+            )
 
     @property
     def strokes_gained(self):
