@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
-    <h1 class="text-lg/6 font-semibold text-gray-900">Dashboard</h1>
+    <h1 class="text-lg/6 font-semibold text-gray-900">Analytics</h1>
 {% endblock header %}
 {% block content %}
     <div class="max-w-4xl mx-auto">
@@ -14,6 +14,31 @@
                  x-data="radarChart()"
                  x-init="initChart(  [ {{ strokes_gained_driving }}, {{ strokes_gained_approach }}, {{ strokes_gained_putting }}, {{ strokes_gained_around_the_green }} ] )">
                 <canvas id="radarChartCanvas" class="w-full h-full"></canvas>
+            </div>
+        </div>
+        <!--Mental Scorecard-->
+        <div class="mb-8 bg-white rounded-lg border shadow-sm">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Mental Scorecard</h3>
+                <p class="text-sm text-gray-600 mt-1">Average mental score vs. average score</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mental Score</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actual Score</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mental vs Actual %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ mental_stats.avg_mental_scorecard_per_18|floatformat:1 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ mental_stats.avg_actual_score_per_18|floatformat:1 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ mental_stats.mental_vs_actual_pct|floatformat:1 }}%</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <!--Tiger 5-->
