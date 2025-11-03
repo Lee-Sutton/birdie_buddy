@@ -10,6 +10,10 @@ class ShotForm(forms.ModelForm):
         model = Shot
         fields = ["start_distance", "lie"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["start_distance"].widget.attrs["autofocus"] = True
+
 
 class ShotFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
