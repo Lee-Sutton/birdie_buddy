@@ -12,6 +12,10 @@ class HoleForm(forms.ModelForm):
         model = Hole
         fields = ["par", "score", "mental_scorecard"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["par"].widget.attrs["autofocus"] = True
+
 
 class HoleCreateView(LoginRequiredMixin, View):
     def get(self, request, id, number):
