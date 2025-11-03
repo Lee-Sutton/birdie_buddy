@@ -74,3 +74,78 @@ def test_tiger_five_basic_counts():
     assert result.three_putts == pytest.approx(1 * scale)
     assert result.bogeys_inside_150 == pytest.approx(1 * scale)
     assert result.two_chip == pytest.approx(1 * scale)
+
+
+@pytest.mark.django_db
+def test_get_for_round_returns_unscaled_stats():
+    round = RoundFactory(holes_played=4)
+    user = round.user
+
+    h1 = HoleFactory(par=4, round=round, user=user)
+    ShotFactory(hole=h1, user=user, start_distance=300, lie="tee")
+    ShotFactory(hole=h1, user=user, start_distance=100, lie="fairway")
+    ShotFactory(hole=h1, user=user, start_distance=20, lie="penalty")
+    h1.score = 5
+    h1.save()
+
+    h2 = HoleFactory(par=4, round=round, user=user)
+    ShotFactory(hole=h2, user=user, start_distance=400, lie="tee")
+    ShotFactory(hole=h2, user=user, start_distance=200, lie="rough")
+    ShotFactory(hole=h2, user=user, start_distance=50, lie="rough")
+    ShotFactory(hole=h2, user=user, start_distance=10, lie="green")
+    h2.score = 6
+    h2.save()
+
+    h3 = HoleFactory(par=3, round=round, user=user)
+    ShotFactory(hole=h3, user=user, start_distance=170, lie="tee")
+    ShotFactory(hole=h3, user=user, start_distance=20, lie="green")
+    ShotFactory(hole=h3, user=user, start_distance=5, lie="green")
+    ShotFactory(hole=h3, user=user, start_distance=1, lie="green")
+    h3.score = 4
+    h3.save()
+
+    h4 = HoleFactory(par=4, round=round, user=user)
+    ShotFactory(hole=h4, user=user, start_distance=400, lie="tee")
+    ShotFactory(hole=h4, user=user, start_distance=120, lie="fairway")
+    ShotFactory(hole=h4, user=user, start_distance=30, lie="sand")
+    ShotFactory(hole=h4, user=user, start_distance=20, lie="fairway")
+    ShotFactory(hole=h4, user=user, start_distance=2, lie="green")
+    h4.score = 5
+    h4.save()
+
+    service = TigerFiveService()
+    result = service.get_for_round(round)
+
+    assert result.penalties == 1
+    assert result.double_bogeys == 1
+    assert result.three_putts == 1
+    assert result.bogeys_inside_150 == 1
+    assert result.two_chip == 1
+
+
+@pytest.mark.django_db
+def test_get_for_round_filters_only_specified_round():
+    round1 = RoundFactory(holes_played=2)
+    round2 = RoundFactory(user=round1.user, holes_played=2)
+    user = round1.user
+
+    h1 = HoleFactory(par=4, round=round1, user=user)
+    ShotFactory(hole=h1, user=user, start_distance=300, lie="tee")
+    ShotFactory(hole=h1, user=user, start_distance=20, lie="penalty")
+    h1.score = 5
+    h1.save()
+
+    h2 = HoleFactory(par=4, round=round2, user=user)
+    ShotFactory(hole=h2, user=user, start_distance=300, lie="tee")
+    ShotFactory(hole=h2, user=user, start_distance=100, lie="fairway")
+    h2.score = 4
+    h2.save()
+
+    service = TigerFiveService()
+    result = service.get_for_round(round1)
+
+    assert result.penalties == 1
+    assert result.double_bogeys == 0
+    assert result.three_putts == 0
+    assert result.bogeys_inside_150 == 0
+    assert result.two_chip == 0
