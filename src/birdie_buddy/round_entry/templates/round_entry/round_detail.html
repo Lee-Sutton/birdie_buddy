@@ -15,142 +15,186 @@
                 </div>
             </div>
         </div>
-
         {% if not show_stats %}
-        <div class="mb-8 bg-yellow-50 rounded-lg border border-yellow-200 p-6">
-            <h3 class="text-lg font-semibold text-yellow-800">Round Incomplete</h3>
-            <p class="text-sm text-yellow-700 mt-2">This round is incomplete. Add hole data to view analytics and stats.</p>
-            <div class="mt-4">
-                <c-a-button severity="primary" href="{% url 'round_entry:create_hole' id=round.id number=1 %}">Complete Round</c-a-button>
+            <div class="mb-8 bg-yellow-50 rounded-lg border border-yellow-200 p-6">
+                <h3 class="text-lg font-semibold text-yellow-800">Round Incomplete</h3>
+                <p class="text-sm text-yellow-700 mt-2">This round is incomplete. Add hole data to view analytics and stats.</p>
+                <div class="mt-4">
+                    <c-a-button severity="primary" href="{% url 'round_entry:create_hole' id=round.id number=1 %}">
+                        Complete Round
+                    </c-a-button>
+                </div>
             </div>
-        </div>
         {% else %}
-        <!-- Holes Section -->
-        <div class="mb-8 bg-white rounded-lg border shadow-sm">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold text-gray-900">Hole Details</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Driving</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Approach</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Around the green</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Putting</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Total</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for hole in holes %}
+            <!-- Holes Section -->
+            <div class="mb-8 bg-white rounded-lg border shadow-sm">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Hole Details</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ hole.number }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hole.score }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_driving >= 0.01 %}text-green-600 {% elif hole.strokes_gained_driving < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_driving|floatformat:2 }}
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Driving</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Approach</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Around the green</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Putting</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SG Total</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for hole in holes %}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ hole.number }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hole.score }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_driving >= 0.01 %}text-green-600 {% elif hole.strokes_gained_driving < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                        {{ hole.strokes_gained_driving|floatformat:2 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_approach >= 0.01 %}text-green-600 {% elif hole.strokes_gained_approach < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                        {{ hole.strokes_gained_approach|floatformat:2 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_around_the_green >= 0.01 %}text-green-600 {% elif hole.strokes_gained_around_the_green < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                        {{ hole.strokes_gained_around_the_green|floatformat:2 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_putting >= 0.01 %}text-green-600 {% elif hole.strokes_gained_putting < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                        {{ hole.strokes_gained_putting|floatformat:2 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained >= 0.01 %}text-green-600 {% elif hole.strokes_gained < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
+                                        {{ hole.strokes_gained|floatformat:2 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <a href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}"
+                                           class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                            Edit Hole
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Radar Chart Section-->
+            <div class="mb-8 bg-white rounded-lg border shadow-sm">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Performance Overview</h3>
+                </div>
+                <div class="h-[32rem] justify-items-center"
+                     x-data="radarChart()"
+                     x-init="initChart(  [ {{ round.strokes_gained_driving }}, {{ round.strokes_gained_approach }}, {{ round.strokes_gained_putting }}, {{ round.strokes_gained_around_the_green }} ] )">
+                    <canvas id="radarChartCanvas" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <!--Tiger 5-->
+            <div class="mb-8 bg-white rounded-lg border shadow-sm">
+                <c-table title="Tiger Five Stats">
+                    <c-slot name="thead">
+                        <tr>
+                            <c-th>
+                                Penalties
+                            </c-th>
+                            <c-th>
+                                Double Bogeys
+                            </c-th>
+                            <c-th>
+                                Three Putts
+                            </c-th>
+                            <c-th>
+                                Bogey 150 in
+                            </c-th>
+                            <c-th>
+                                Two chips
+                            </c-th>
+                        </tr>
+                    </c-slot>
+                    <c-slot name="tbody">
+                        <tr>
+                            <c-td>
+                                {{ tiger.penalties|floatformat:2 }}
+                            </c-td>
+                            <c-td>
+                                {{ tiger.double_bogeys|floatformat:2 }}
+                            </c-td>
+                            <c-td>
+                                {{ tiger.three_putts|floatformat:2 }}
+                            </c-td>
+                            <c-td>
+                                {{ tiger.bogeys_inside_150|floatformat:2 }}
+                            </c-td>
+                            <c-td>
+                                {{ tiger.two_chip|floatformat:2 }}
+                            </c-td>
+                        </tr>
+                    </c-slot>
+                </c-table>
+            </div>
+            <!--Analytics Section-->
+            <div class="mb-8 bg-white rounded-lg border shadow-sm">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Detailed Analytics</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metric</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Par 4 Driving</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ round.strokes_gained_driving|default:"0.00"|floatformat:2 }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_approach >= 0.01 %}text-green-600 {% elif hole.strokes_gained_approach < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_approach|floatformat:2 }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_around_the_green >= 0.01 %}text-green-600 {% elif hole.strokes_gained_around_the_green < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_around_the_green|floatformat:2 }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained_putting >= 0.01 %}text-green-600 {% elif hole.strokes_gained_putting < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained_putting|floatformat:2 }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if hole.strokes_gained >= 0.01 %}text-green-600 {% elif hole.strokes_gained < -0.01 %}text-red-600 {% else %}text-gray-900{% endif %}">
-                                    {{ hole.strokes_gained|floatformat:2 }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <a href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}"
-                                       class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                                        Edit Hole
-                                    </a>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.par4_driving|default:"0.00"|floatformat:2 }}
                                 </td>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Par 5 Driving</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.par5_driving|default:"0.00"|floatformat:2 }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.par5_driving|default:"0.00"|floatformat:2 }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Approach 150-175</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.approach_150_175|default:"0.00"|floatformat:2 }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.approach_150_175|default:"0.00"|floatformat:2 }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Approach 125-150</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.approach_125_150|default:"0.00"|floatformat:2 }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ analytics.approach_125_150|default:"0.00"|floatformat:2 }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Putting</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ analytics.putting|default:"0.00"|floatformat:2 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ analytics.putting|default:"0.00"|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <!--Radar Chart Section-->
-        <div class="mb-8 bg-white rounded-lg border shadow-sm">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold text-gray-900">Performance Overview</h3>
-            </div>
-            <div class="h-[32rem] justify-items-center"
-                 x-data="radarChart()"
-                 x-init="initChart(  [ {{ round.strokes_gained_driving }}, {{ round.strokes_gained_approach }}, {{ round.strokes_gained_putting }}, {{ round.strokes_gained_around_the_green }} ] )">
-                <canvas id="radarChartCanvas" class="w-full h-full"></canvas>
-            </div>
-        </div>
-        <!--Analytics Section-->
-        <div class="mb-8 bg-white rounded-lg border shadow-sm">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold text-gray-900">Detailed Analytics</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metric</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Par 4 Driving</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ round.strokes_gained_driving|default:"0.00"|floatformat:2 }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.par4_driving|default:"0.00"|floatformat:2 }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Par 5 Driving</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.par5_driving|default:"0.00"|floatformat:2 }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.par5_driving|default:"0.00"|floatformat:2 }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Approach 150-175</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.approach_150_175|default:"0.00"|floatformat:2 }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.approach_150_175|default:"0.00"|floatformat:2 }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Approach 125-150</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.approach_125_150|default:"0.00"|floatformat:2 }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ analytics.approach_125_150|default:"0.00"|floatformat:2 }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Putting</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ analytics.putting|default:"0.00"|floatformat:2 }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ analytics.putting|default:"0.00"|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
         {% endif %}
     </div>
 {% endblock content %}
