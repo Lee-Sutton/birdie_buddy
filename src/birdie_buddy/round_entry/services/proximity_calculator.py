@@ -12,8 +12,13 @@ class ProximityCalculator:
         min_distance: int,
         max_distance: int | None,
         lie: str | None = None,
+        round=None,
     ) -> float:
-        shots_with_next = Shot.objects.filter(user=user).annotate(
+        queryset = Shot.objects.filter(user=user)
+        if round is not None:
+            queryset = queryset.filter(hole__round=round)
+
+        shots_with_next = queryset.annotate(
             next_distance=Window(
                 expression=Lead("feet"),
                 partition_by=[F("hole_id")],

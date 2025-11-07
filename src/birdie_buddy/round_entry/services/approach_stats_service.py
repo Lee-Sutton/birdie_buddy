@@ -30,7 +30,7 @@ class ApproachShotService:
         self.proximity_calculator = ProximityCalculator()
 
     def strokes_gained_by_distance_range(
-        self, user, min_distance: int, max_distance: int | None, lie: str | None = None
+        self, user, min_distance: int, max_distance: int | None, lie: str | None = None, round=None
     ) -> float:
         filters = {
             "user": user,
@@ -44,8 +44,14 @@ class ApproachShotService:
         if lie is not None:
             filters["lie"] = lie
 
+        if round is not None:
+            filters["hole__round"] = round
+
         shots = Shot.objects.filter(**filters)
         total_sg = shots.aggregate(total=Sum("strokes_gained"))["total"] or 0.0
+
+        if round is not None:
+            return total_sg
 
         total_holes = Hole.objects.filter(user=user).count()
         if total_holes == 0:
@@ -53,68 +59,68 @@ class ApproachShotService:
 
         return (total_sg / total_holes) * 18
 
-    def strokes_gained_30_100(self, user):
-        return self.strokes_gained_by_distance_range(user, 30, 100)
+    def strokes_gained_30_100(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 30, 100, round=round)
 
-    def strokes_gained_100_150(self, user):
-        return self.strokes_gained_by_distance_range(user, 100, 150)
+    def strokes_gained_100_150(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 100, 150, round=round)
 
-    def strokes_gained_150_200(self, user):
-        return self.strokes_gained_by_distance_range(user, 150, 200)
+    def strokes_gained_150_200(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 150, 200, round=round)
 
-    def strokes_gained_over_200(self, user):
-        return self.strokes_gained_by_distance_range(user, 200, None)
+    def strokes_gained_over_200(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 200, None, round=round)
 
-    def strokes_gained_30_100_rough(self, user):
-        return self.strokes_gained_by_distance_range(user, 30, 100, lie="rough")
+    def strokes_gained_30_100_rough(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 30, 100, lie="rough", round=round)
 
-    def strokes_gained_100_150_rough(self, user):
-        return self.strokes_gained_by_distance_range(user, 100, 150, lie="rough")
+    def strokes_gained_100_150_rough(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 100, 150, lie="rough", round=round)
 
-    def strokes_gained_150_200_rough(self, user):
-        return self.strokes_gained_by_distance_range(user, 150, 200, lie="rough")
+    def strokes_gained_150_200_rough(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 150, 200, lie="rough", round=round)
 
-    def strokes_gained_over_200_rough(self, user):
-        return self.strokes_gained_by_distance_range(user, 200, None, lie="rough")
+    def strokes_gained_over_200_rough(self, user, round=None):
+        return self.strokes_gained_by_distance_range(user, 200, None, lie="rough", round=round)
 
-    def avg_proximity_30_100(self, user):
+    def avg_proximity_30_100(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 30, 100
+            user, "approach", 30, 100, round=round
         )
 
-    def avg_proximity_100_150(self, user):
+    def avg_proximity_100_150(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 100, 150
+            user, "approach", 100, 150, round=round
         )
 
-    def avg_proximity_150_200(self, user):
+    def avg_proximity_150_200(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 150, 200
+            user, "approach", 150, 200, round=round
         )
 
-    def avg_proximity_over_200(self, user):
+    def avg_proximity_over_200(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 200, None
+            user, "approach", 200, None, round=round
         )
 
-    def avg_proximity_30_100_rough(self, user):
+    def avg_proximity_30_100_rough(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 30, 100, lie="rough"
+            user, "approach", 30, 100, lie="rough", round=round
         )
 
-    def avg_proximity_100_150_rough(self, user):
+    def avg_proximity_100_150_rough(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 100, 150, lie="rough"
+            user, "approach", 100, 150, lie="rough", round=round
         )
 
-    def avg_proximity_150_200_rough(self, user):
+    def avg_proximity_150_200_rough(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 150, 200, lie="rough"
+            user, "approach", 150, 200, lie="rough", round=round
         )
 
-    def avg_proximity_over_200_rough(self, user):
+    def avg_proximity_over_200_rough(self, user, round=None):
         return self.proximity_calculator.calculate_avg_proximity(
-            user, "approach", 200, None, lie="rough"
+            user, "approach", 200, None, lie="rough", round=round
         )
 
     def get_for_user(self, user):
@@ -137,4 +143,26 @@ class ApproachShotService:
             avg_proximity_100_150_rough=self.avg_proximity_100_150_rough(user),
             avg_proximity_150_200_rough=self.avg_proximity_150_200_rough(user),
             avg_proximity_over_200_rough=self.avg_proximity_over_200_rough(user),
+        )
+
+    def get_for_round(self, round):
+        return ApproachStats(
+            strokes_gained_30_100_per_18=self.strokes_gained_30_100(round.user, round),
+            strokes_gained_100_150_per_18=self.strokes_gained_100_150(round.user, round),
+            strokes_gained_150_200_per_18=self.strokes_gained_150_200(round.user, round),
+            strokes_gained_over_200_per_18=self.strokes_gained_over_200(round.user, round),
+            strokes_gained_30_100_rough_per_18=self.strokes_gained_30_100_rough(round.user, round),
+            strokes_gained_100_150_rough_per_18=self.strokes_gained_100_150_rough(round.user, round),
+            strokes_gained_150_200_rough_per_18=self.strokes_gained_150_200_rough(round.user, round),
+            strokes_gained_over_200_rough_per_18=self.strokes_gained_over_200_rough(
+                round.user, round
+            ),
+            avg_proximity_30_100=self.avg_proximity_30_100(round.user, round),
+            avg_proximity_100_150=self.avg_proximity_100_150(round.user, round),
+            avg_proximity_150_200=self.avg_proximity_150_200(round.user, round),
+            avg_proximity_over_200=self.avg_proximity_over_200(round.user, round),
+            avg_proximity_30_100_rough=self.avg_proximity_30_100_rough(round.user, round),
+            avg_proximity_100_150_rough=self.avg_proximity_100_150_rough(round.user, round),
+            avg_proximity_150_200_rough=self.avg_proximity_150_200_rough(round.user, round),
+            avg_proximity_over_200_rough=self.avg_proximity_over_200_rough(round.user, round),
         )

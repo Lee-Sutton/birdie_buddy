@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from birdie_buddy.round_entry.models import Round
 from birdie_buddy.round_entry.services.tiger_five import TigerFiveService
+from birdie_buddy.round_entry.services.approach_stats_service import ApproachShotService
 
 
 class RoundDetailView(LoginRequiredMixin, View):
@@ -21,6 +22,7 @@ class RoundDetailView(LoginRequiredMixin, View):
             "round": round,
             "holes": holes,
             "tiger": TigerFiveService().get_for_round(round),
+            "approach_stats": ApproachShotService().get_for_round(round),
             "show_stats": round.complete,
             "continue_href": continue_href,
         }
