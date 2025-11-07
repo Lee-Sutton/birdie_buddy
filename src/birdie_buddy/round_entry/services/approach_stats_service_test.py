@@ -1476,3 +1476,103 @@ class TestApproachShotService:
         assert stats.avg_proximity_100_150 == pytest.approx(5.0)
         assert stats.avg_proximity_30_100_rough == 0.0
         assert stats.avg_proximity_100_150_rough == pytest.approx(5.0)
+
+    def test_get_for_round(self):
+        user = UserFactory()
+        service = ApproachShotService()
+        round1 = RoundFactory(user=user)
+        round2 = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round1, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=80,
+            strokes_gained=0.5,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.1,
+        )
+
+        hole2 = HoleFactory(user=user, round=round1, par=5, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=550,
+            strokes_gained=0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=280,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="rough",
+            start_distance=120,
+            strokes_gained=-0.3,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=4,
+            lie="green",
+            start_distance=5,
+            strokes_gained=0.0,
+        )
+
+        hole3 = HoleFactory(user=user, round=round2, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=2,
+            lie="fairway",
+            start_distance=150,
+            strokes_gained=0.8,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole3,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.1,
+        )
+
+        stats = service.get_for_round(round1)
+
+        assert stats.strokes_gained_30_100_per_18 == 0.5
+        assert stats.strokes_gained_100_150_per_18 == -0.3
+        assert stats.strokes_gained_150_200_per_18 == 0.0
+        assert stats.strokes_gained_over_200_per_18 == 0.0
+

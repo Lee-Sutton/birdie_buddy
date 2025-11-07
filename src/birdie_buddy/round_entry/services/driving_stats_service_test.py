@@ -294,3 +294,28 @@ class TestDrivingStatsService:
         # Should have fairways_per_18 field populated
         assert hasattr(stats, "fairways_per_18")
         assert stats.fairways_per_18 == DrivingStatsService.DRIVES_PER_18
+
+    def test_get_for_round(self):
+        user = UserFactory()
+        service = DrivingStatsService()
+        round1 = RoundFactory(user=user)
+        round2 = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round1, par=4, number=1)
+        ShotFactory(user=user, hole=hole1, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole1, number=2, lie="fairway", start_distance=150)
+
+        hole2 = HoleFactory(user=user, round=round1, par=5, number=2)
+        ShotFactory(user=user, hole=hole2, number=1, lie="tee", start_distance=550)
+        ShotFactory(user=user, hole=hole2, number=2, lie="rough", start_distance=300)
+
+        hole3 = HoleFactory(user=user, round=round2, par=4, number=1)
+        ShotFactory(user=user, hole=hole3, number=1, lie="tee", start_distance=400)
+        ShotFactory(user=user, hole=hole3, number=2, lie="penalty", start_distance=400)
+
+        stats = service.get_for_round(round1)
+
+        assert stats.fairways_per_18 == 1
+        assert stats.rough_per_18 == 1
+        assert stats.penalties_per_18 == 0
+
