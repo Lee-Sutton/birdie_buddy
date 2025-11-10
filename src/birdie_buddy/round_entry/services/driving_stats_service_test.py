@@ -315,7 +315,7 @@ class TestDrivingStatsService:
 
         stats = service.get_for_round(round1)
 
-        assert stats.fairways_per_18 == 1
-        assert stats.rough_per_18 == 1
-        assert stats.penalties_per_18 == 0
+        assert stats.fairways == 1
+        assert stats.rough == 1
+        assert stats.penalties == 0
 

@@ -18,6 +18,16 @@ class DrivingStats(NamedTuple):
     fairways_per_18: float
 
 
+class RoundDrivingStats(NamedTuple):
+    """
+    A named tuple to hold driving stats for a specific round.
+    """
+
+    penalties: float
+    rough: float
+    fairways: float
+
+
 class DrivingStatsService:
     """
     A service to calculate driving stats for a user.
@@ -34,9 +44,11 @@ class DrivingStatsService:
             user=user,
         )
 
-    def _drive_ending_lie_per_18(self, user, lie: str, round=None) -> float:
+    def _drive_ending_lie(self, user, lie: str, round=None) -> float:
         """
-        Calculates the number of drives that end up in a specific lie per 18 holes.
+        Calculates the number of drives that end up in a specific lie.
+        When round is None, normalizes to per-18-hole average.
+        When round is provided, returns raw count for that round.
         Only considers par 4 and par 5 holes where the second shot has the given lie.
         """
         filters = {"user": user, "par__in": [4, 5], "shot__number": 2, "shot__lie": lie}
@@ -56,43 +68,64 @@ class DrivingStatsService:
 
         return (lie_holes / total_driving_holes) * self.DRIVES_PER_18
 
-    def penalties_per_18(self, user, round=None) -> float:
+    def penalties(self, user, round=None) -> float:
+        """
+        Calculates the number of tee shots that result in penalties.
+        When round is None, returns per-18-hole average.
+        When round is provided, returns raw count for that round.
+        """
+        return self._drive_ending_lie(user, "penalty", round)
+
+    def penalties_per_18(self, user) -> float:
         """
         Calculates the number of tee shots that result in penalties per 18 holes.
-        Only considers par 4 and par 5 holes where the second shot is a penalty.
         """
-        return self._drive_ending_lie_per_18(user, "penalty", round)
+        return self.penalties(user, round=None)
 
-    def rough_per_18(self, user, round=None) -> float:
+    def rough(self, user, round=None) -> float:
+        """
+        Calculates the number of tee shots that end up in the rough.
+        When round is None, returns per-18-hole average.
+        When round is provided, returns raw count for that round.
+        """
+        return self._drive_ending_lie(user, "rough", round)
+
+    def rough_per_18(self, user) -> float:
         """
         Calculates the number of tee shots that end up in the rough per 18 holes.
-        Only considers par 4 and par 5 holes where the second shot is from the rough.
         """
-        return self._drive_ending_lie_per_18(user, "rough", round)
+        return self.rough(user, round=None)
 
-    def fairways_per_18(self, user, round=None) -> float:
+    def fairways(self, user, round=None) -> float:
+        """
+        Calculates the number of tee shots that end up in the fairway.
+        When round is None, returns per-18-hole average.
+        When round is provided, returns raw count for that round.
+        """
+        return self._drive_ending_lie(user, "fairway", round)
+
+    def fairways_per_18(self, user) -> float:
         """
         Calculates the number of tee shots that end up in the fairway per 18 holes.
-        Only considers par 4 and par 5 holes where the second shot is from the fairway.
         """
-        return self._drive_ending_lie_per_18(user, "fairway", round)
+        return self.fairways(user, round=None)
 
     def get_for_user(self, user) -> DrivingStats:
         """
         Returns all driving statistics for a user.
         """
         return DrivingStats(
-            penalties_per_18=self.penalties_per_18(user),
-            rough_per_18=self.rough_per_18(user),
-            fairways_per_18=self.fairways_per_18(user),
+            penalties_per_18=self.penalties(user),
+            rough_per_18=self.rough(user),
+            fairways_per_18=self.fairways(user),
         )
 
-    def get_for_round(self, round) -> DrivingStats:
+    def get_for_round(self, round) -> RoundDrivingStats:
         """
         Returns all driving statistics for a round.
         """
-        return DrivingStats(
-            penalties_per_18=self.penalties_per_18(round.user, round),
-            rough_per_18=self.rough_per_18(round.user, round),
-            fairways_per_18=self.fairways_per_18(round.user, round),
+        return RoundDrivingStats(
+            penalties=self.penalties(round.user, round),
+            rough=self.rough(round.user, round),
+            fairways=self.fairways(round.user, round),
         )
