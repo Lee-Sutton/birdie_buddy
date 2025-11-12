@@ -272,6 +272,70 @@
                     </div>
                 </div>
             </div>
+            <!--Putting-->
+            <div class="mb-8 bg-white rounded-lg border shadow-sm">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Putting</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance (ft)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Make Rate (%)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strokes Gained</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">0-3</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_0_3|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_0_3|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3-6</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_3_6|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_3_6|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">6-9</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_6_9|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_6_9|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">9-12</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_9_12|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_9_12|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">12-15</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_12_15|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_12_15|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">15-20</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_15_20|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_15_20|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">20-30</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_20_30|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_20_30|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">30-40</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_30_40|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_30_40|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">40+</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.make_rate_40_plus|floatformat:0 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ putting_stats.strokes_gained_40_plus|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endblock content %}

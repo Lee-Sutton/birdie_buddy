@@ -749,3 +749,67 @@ class TestPuttingStatsService:
         expected = 0.9 / 2 * 18
         assert service.strokes_gained_9_12(user) == pytest.approx(expected)
 
+    def test_get_for_round(self):
+        user = UserFactory()
+        service = PuttingStatsService()
+        round = RoundFactory(user=user)
+
+        hole1 = HoleFactory(user=user, round=round, par=4, number=1)
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=2,
+            lie="fairway",
+            start_distance=150,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole1,
+            number=3,
+            lie="green",
+            start_distance=2,
+            strokes_gained=0.5,
+        )
+
+        hole2 = HoleFactory(user=user, round=round, par=4, number=2)
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=1,
+            lie="tee",
+            start_distance=400,
+            strokes_gained=0.1,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=2,
+            lie="fairway",
+            start_distance=150,
+            strokes_gained=0.2,
+        )
+        ShotFactory(
+            user=user,
+            hole=hole2,
+            number=3,
+            lie="green",
+            start_distance=10,
+            strokes_gained=-0.3,
+        )
+
+        stats = service.get_for_round(round)
+
+        assert hasattr(stats, "strokes_gained_0_3")
+        assert hasattr(stats, "strokes_gained_9_12")
+        assert stats.strokes_gained_0_3 == pytest.approx(0.5)
+        assert stats.strokes_gained_9_12 == pytest.approx(-0.3)
+
