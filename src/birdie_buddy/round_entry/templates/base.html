@@ -52,10 +52,11 @@
                                 <div class="ml-10 flex items-baseline space-x-4">
                                     <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                                     <a href="{% url 'round_entry:home' %}"
-                                       class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                                       aria-current="page">Analytics</a>
+                                       class="rounded-md px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name == 'home' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
+                                       {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Analytics</a>
                                     <a href="{% url 'round_entry:round_list' %}"
-                                       class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Rounds</a>
+                                       class="rounded-md px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
+                                       {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}aria-current="page"{% endif %}>Rounds</a>
                                     <a href="#"
                                        class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
                                     <a href="#"
@@ -172,11 +173,12 @@
                 <div class="md:hidden hidden" id="mobile-menu">
                     <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                        <a href="#"
-                           class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                           aria-current="page">Dashboard</a>
-                        <a href="{% url 'round_entry:create_round' %}"
-                           class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Rounds</a>
+                        <a href="{% url 'round_entry:home' %}"
+                           class="block rounded-md px-3 py-2 text-base font-medium {% if request.resolver_match.url_name == 'home' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
+                           {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Analytics</a>
+                        <a href="{% url 'round_entry:round_list' %}"
+                           class="block rounded-md px-3 py-2 text-base font-medium {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
+                           {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}aria-current="page"{% endif %}>Rounds</a>
                         <a href="#"
                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
                         <a href="#"
