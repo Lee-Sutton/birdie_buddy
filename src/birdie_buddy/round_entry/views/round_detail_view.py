@@ -8,6 +8,7 @@ from birdie_buddy.round_entry.services.tiger_five import TigerFiveService
 from birdie_buddy.round_entry.services.approach_stats_service import ApproachShotService
 from birdie_buddy.round_entry.services.driving_stats_service import DrivingStatsService
 from birdie_buddy.round_entry.services.putting_stats_service import PuttingStatsService
+from birdie_buddy.round_entry.services.mental_scorecard_service import MentalScorecardService
 
 
 class RoundDetailView(LoginRequiredMixin, View):
@@ -27,6 +28,7 @@ class RoundDetailView(LoginRequiredMixin, View):
             "approach_stats": ApproachShotService().get_for_round(round),
             "driving_stats": DrivingStatsService().get_for_round(round),
             "putting_stats": PuttingStatsService().get_for_round(round),
+            "mental_stats": MentalScorecardService().get_for_round(round),
             "show_stats": round.complete,
             "continue_href": continue_href,
         }

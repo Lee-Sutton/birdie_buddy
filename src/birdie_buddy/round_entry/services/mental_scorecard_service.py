@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 
 from birdie_buddy.round_entry.models import Hole, Round
 
@@ -10,6 +10,14 @@ class MentalScorecardStats:
     avg_actual_score_per_18: float
     mental_vs_actual_pct: float
     rounds_with_mental_data: int
+
+
+@dataclass
+class RoundMentalScorecardStats:
+    total_mental_scorecard: float
+    total_actual_score: float
+    mental_vs_actual_pct: float
+    holes_with_mental_data: int
 
 
 class MentalScorecardService:
@@ -52,4 +60,36 @@ class MentalScorecardService:
             avg_actual_score_per_18=avg_score_per_18,
             mental_vs_actual_pct=mental_vs_actual_pct,
             rounds_with_mental_data=rounds_with_mental,
+        )
+
+    def get_for_round(self, round) -> RoundMentalScorecardStats:
+        holes_with_mental = Hole.objects.filter(
+            round=round, mental_scorecard__isnull=False, score__isnull=False
+        )
+
+        if not holes_with_mental.exists():
+            return RoundMentalScorecardStats(
+                total_mental_scorecard=0.0,
+                total_actual_score=0.0,
+                mental_vs_actual_pct=0.0,
+                holes_with_mental_data=0,
+            )
+
+        totals = holes_with_mental.aggregate(
+            total_mental=Sum("mental_scorecard"), total_score=Sum("score")
+        )
+
+        total_mental = totals["total_mental"] or 0.0
+        total_score = totals["total_score"] or 0.0
+
+        if total_score > 0:
+            mental_vs_actual_pct = (total_mental / total_score) * 100
+        else:
+            mental_vs_actual_pct = 0.0
+
+        return RoundMentalScorecardStats(
+            total_mental_scorecard=float(total_mental),
+            total_actual_score=float(total_score),
+            mental_vs_actual_pct=mental_vs_actual_pct,
+            holes_with_mental_data=holes_with_mental.count(),
         )
