@@ -51,9 +51,11 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_cotton",
     "crispy_tailwind",
-    "birdie_buddy.round_entry",
-    "birdie_buddy.users",
     "birdie_buddy.components",
+    # APPS
+    "birdie_buddy.round_entry",
+    "birdie_buddy.practice",
+    "birdie_buddy.users",
 ]
 
 MIDDLEWARE = [
