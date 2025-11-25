@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block header %}
+    <h1 class="text-lg/6 font-semibold text-gray-900">Practice Session</h1>
+{% endblock header %}
+{% block content %}
+    <div class="max-w-4xl mx-auto">
+        <!-- Session Header Section -->
+        <div class="mb-6 bg-white rounded-lg border shadow-sm">
+            <div class="p-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">{{ session.get_practice_type_display }}</h2>
+                        <p class="text-sm text-gray-500">{{ session.created_at|date:"F j, Y" }}</p>
+                    </div>
+                    <div>
+                        <c-a-button severity="primary" href="{% url 'practice:edit_session' id=session.pk %}">
+                            Edit Session
+                        </c-a-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Details -->
+        <div class="mb-8 bg-white rounded-lg border shadow-sm">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Session Details</h3>
+            </div>
+            <div class="p-6">
+                <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Practice Type</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ session.get_practice_type_display }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Outcome</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ session.get_outcome_display }}</dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-gray-500">Notes</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ session.notes|default:"No notes recorded" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between">
+            <c-a-button severity="secondary" href="{% url 'practice:practice_list' %}">
+                Back to List
+            </c-a-button>
+        </div>
+    </div>
+{% endblock content %}

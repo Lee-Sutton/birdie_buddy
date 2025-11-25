@@ -28,7 +28,7 @@
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ session.get_outcome_display }}</td>
           <td class="px-6 py-4 text-sm text-gray-900">{{ session.notes|truncatewords:10|default:"-" }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <!-- View link to be added when detail view is implemented -->
+            <a href="{% url 'practice:session_detail' id=session.pk %}" class="text-indigo-600 hover:text-indigo-900">View</a>
           </td>
         </tr>
         {% empty %}

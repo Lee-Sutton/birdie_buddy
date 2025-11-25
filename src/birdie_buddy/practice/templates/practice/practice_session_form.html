@@ -2,12 +2,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="max-w-3xl mx-auto">
-        <h1 class="text-xl mb-4">Track Practice Session</h1>
+        <h1 class="text-xl mb-4">{% if session %}Edit{% else %}Track{% endif %} Practice Session</h1>
         <form method="post" novalidate>
             {{ form|crispy }}
             <div class="flex justify-between">
                 <div class="w-1/3">
-                    <c-a-button severity="secondary" href="{% url 'practice:practice_list' %}">
+                    <c-a-button severity="secondary" href="{% if session %}{% url 'practice:session_detail' id=session.pk %}{% else %}{% url 'practice:practice_list' %}{% endif %}">
                     Cancel
                     </c-a-button>
                 </div>
