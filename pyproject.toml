@@ -14,6 +14,7 @@ dependencies = [
     "django-cotton>=2.1.2",
     "django-environ>=0.12.0",
     "psycopg2-binary>=2.9.10",
+    "cotton-heroicons>=0.1.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_cotton",
     "crispy_tailwind",
+    "cotton_heroicons",
     "birdie_buddy.components",
     # APPS
     "birdie_buddy.round_entry",

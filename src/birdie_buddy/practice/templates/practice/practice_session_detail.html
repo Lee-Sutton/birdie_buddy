@@ -10,19 +10,23 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="text-base/7 font-semibold text-gray-900">{{ session.get_practice_type_display }} Practice Session</h3>
-                        <p class="mt-1 max-w-2xl text-sm/6 text-gray-500">Session details and notes from {{ session.created_at|date:"F j, Y" }}</p>
+                        <p class="mt-1 max-w-2xl text-sm/6 text-gray-500">
+                            Session details and notes from {{ session.created_at|date:"F j, Y" }}
+                        </p>
                     </div>
-                    <div class="flex gap-2">
-                        <c-a-button severity="primary" href="{% url 'practice:edit_session' id=session.pk %}">
-                            Edit Session
-                        </c-a-button>
-                        <button 
-                            hx-delete="{% url 'practice:delete_session' id=session.pk %}"
-                            hx-confirm="Are you sure you want to delete this practice session? This action cannot be undone."
-                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            Delete
-                        </button>
+                    <div class="flex">
+                        <div class="mr-2">
+                            <c-a-button severity="secondary" href="{% url 'practice:edit_session' id=session.pk %}">
+                                <c-heroicon.pencil />
+                            </c-a-button>
+                        </div>
+                        <div class="ml-2">
+                            <c-button severity="secondary" hx-delete="{% url 'practice:delete_session' id=session.pk %}" 
+                  hx-confirm="Are you sure you want to delete this practice session? This action cannot be undone." 
+                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                <c-heroicon.trash />
+                            </c-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,7 +75,6 @@
                 </dl>
             </div>
         </div>
-
         <!-- Actions -->
         <div>
             <c-a-button severity="secondary" href="{% url 'practice:practice_list' %}">

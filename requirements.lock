@@ -13,10 +13,13 @@
 asgiref==3.8.1
     # via django
     # via django-htmx
+cotton-heroicons==0.1.2
+    # via birdie-buddy
 crispy-tailwind==1.0.3
     # via birdie-buddy
 django==5.1.4
     # via birdie-buddy
+    # via cotton-heroicons
     # via crispy-tailwind
     # via django-cotton
     # via django-crispy-forms
@@ -24,6 +27,7 @@ django==5.1.4
     # via django-htmx
 django-cotton==2.1.2
     # via birdie-buddy
+    # via cotton-heroicons
 django-crispy-forms==2.3
     # via birdie-buddy
     # via crispy-tailwind
