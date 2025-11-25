@@ -142,3 +142,57 @@ class TestPracticeSessionEditView:
         assert form.initial["practice_type"] == "FS"
         assert form.initial["outcome"] == 3
         assert form.initial["notes"] == "Great practice session today!"
+
+
+@pytest.mark.django_db
+class TestPracticeSessionDeleteView:
+    def test_unauthenticated_user_redirected_to_login(self, client, practice_session):
+        url = reverse("practice:delete_session", kwargs={"id": practice_session.pk})
+        response = client.post(url)
+        assert response.status_code == 302
+        assert "/users/login/" in response.url
+
+    def test_can_delete_practice_session(
+        self, authenticated_client, practice_session
+    ):
+        url = reverse("practice:delete_session", kwargs={"id": practice_session.pk})
+        
+        # Verify session exists
+        assert PracticeSession.objects.filter(pk=practice_session.pk).exists()
+        
+        response = authenticated_client.post(url)
+        
+        # Verify session was deleted
+        assert not PracticeSession.objects.filter(pk=practice_session.pk).exists()
+        
+        # Verify redirect
+        assert response.status_code == 302
+        assertRedirects(response, reverse("practice:practice_list"))
+
+    def test_cannot_delete_other_users_session(self, authenticated_client):
+        other_user = User.objects.create_user(username="other", password="pass123")
+        other_session = PracticeSession.objects.create(
+            user=other_user,
+            practice_type="PT",
+            outcome=2,
+            notes="Other user's session",
+        )
+
+        url = reverse("practice:delete_session", kwargs={"id": other_session.pk})
+        response = authenticated_client.post(url)
+        
+        # Should get 404
+        assert response.status_code == 404
+        
+        # Session should still exist
+        assert PracticeSession.objects.filter(pk=other_session.pk).exists()
+
+    def test_delete_only_accepts_post(self, authenticated_client, practice_session):
+        url = reverse("practice:delete_session", kwargs={"id": practice_session.pk})
+        
+        # GET request should not delete
+        response = authenticated_client.get(url)
+        assert response.status_code == 405  # Method not allowed
+        
+        # Session should still exist
+        assert PracticeSession.objects.filter(pk=practice_session.pk).exists()

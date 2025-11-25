@@ -65,3 +65,10 @@ class PracticeSessionEditView(LoginRequiredMixin, View):
             "practice/practice_session_form.html",
             {"form": form, "session": session},
         )
+
+
+class PracticeSessionDeleteView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        session = get_object_or_404(PracticeSession, pk=id, user=request.user)
+        session.delete()
+        return redirect(reverse("practice:practice_list"))
