@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import ListView, View
 from django.shortcuts import redirect, render, get_object_or_404
@@ -71,4 +72,9 @@ class PracticeSessionDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
         session = get_object_or_404(PracticeSession, pk=id, user=request.user)
         session.delete()
-        return redirect(reverse("practice:practice_list"))
+        response = HttpResponse(status=200)
+        response["HX-Redirect"] = reverse("practice:practice_list")
+        return response
+    
+    def delete(self, request, id):
+        return self.post(request, id)

@@ -165,9 +165,9 @@ class TestPracticeSessionDeleteView:
         # Verify session was deleted
         assert not PracticeSession.objects.filter(pk=practice_session.pk).exists()
         
-        # Verify redirect
-        assert response.status_code == 302
-        assertRedirects(response, reverse("practice:practice_list"))
+        # Verify htmx redirect header
+        assert response.status_code == 200
+        assert response["HX-Redirect"] == reverse("practice:practice_list")
 
     def test_cannot_delete_other_users_session(self, authenticated_client):
         other_user = User.objects.create_user(username="other", password="pass123")
