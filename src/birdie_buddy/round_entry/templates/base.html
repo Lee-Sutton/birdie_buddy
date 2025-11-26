@@ -51,14 +51,20 @@
                             <div class="hidden md:block">
                                 <div class="ml-10 flex items-baseline space-x-4">
                                     <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                                    <a href="{% url 'round_entry:round_list' %}"
-                                       class="rounded-md px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
-                                       {% if request.resolver_match.url_name in 'round_list,create_round,round_detail,create_hole,create_shots' %}aria-current="page"{% endif %}>Rounds</a>
-                                    <a href="{% url 'round_entry:home' %}"
-                                       class="rounded-md px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name == 'home' %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"
-                                       {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Analytics</a>
-                                    <a href="#"
-                                       class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Practice</a>
+                                    <c-nav-item url="{% url 'round_entry:home' %}">
+                                        Dashboard
+                                    </c-nav-item>
+                                    <c-nav-item url="{% url 'round_entry:round_list' %}">
+                                        Rounds
+                                    </c-nav-item>
+                                    <c-nav-item url="{% url 'practice:practice_list' %}">
+                                        Practice
+                                    </c-nav-item>
+                                    <!-- <a href="{% url 'practice:practice_list' %}" -->
+                                    <!--    {% if '/practice' in request.path %}aria-current="page"{% endif %} -->
+                                    <!--    class="rounded-md px-3 py-2 text-sm font-medium {% if '/practice' in request.path %}bg-gray-900 text-white{% else %}text-gray-300 hover:bg-gray-700 hover:text-white{% endif %}"> -->
+                                    <!--     Practice -->
+                                    <!-- </a> -->
                                     <a href="#"
                                        class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Learn</a>
                                 </div>
