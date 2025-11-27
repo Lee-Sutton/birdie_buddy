@@ -242,3 +242,28 @@ class Shot(models.Model):
 
     def __str__(self):
         return f"{self.shot_type} - {self.start_distance}"
+
+
+class ScorecardUpload(models.Model):
+    """Model for storing uploaded scorecard image"""
+
+    created_at = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    round = models.OneToOneField(
+        Round,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+
+    scorecard_image = models.ImageField(
+        upload_to="scorecards/%Y/%m/%d/", help_text="Image of your full scorecard"
+    )
+
+    course_name = models.CharField(max_length=256)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Scorecard for {self.course_name} - {self.created_at.date()}"
