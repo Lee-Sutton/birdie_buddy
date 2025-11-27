@@ -37,6 +37,8 @@ django-extensions==3.2.3
     # via birdie-buddy
 django-htmx==1.21.0
     # via birdie-buddy
+pillow==12.0.0
+    # via birdie-buddy
 psycopg2-binary==2.9.10
     # via birdie-buddy
 sqlparse==0.5.3

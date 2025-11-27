@@ -1,9 +1,15 @@
 from django.urls import path
+from django.views.generic import RedirectView
 from . import views
 
 app_name = "round_entry"
 
 urlpatterns = [
+    path(
+        "",
+        RedirectView.as_view(url="/analytics", permanent=False),
+        name="home_redirect",
+    ),
     path("analytics", views.stats_view, name="home"),
     path("rounds/", views.RoundListView.as_view(), name="round_list"),
     path("rounds/create", views.RoundCreateView.as_view(), name="create_round"),
