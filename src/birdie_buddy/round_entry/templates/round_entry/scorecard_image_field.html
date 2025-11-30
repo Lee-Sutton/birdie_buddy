@@ -1,0 +1,83 @@
+<div class="col-span-full">
+  <label for="file-upload" class="block text-sm/6 font-medium text-gray-900">Scorecard image</label>
+  <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10" id="upload-area">
+    <div class="text-center" id="upload-content">
+      <!-- Default upload state -->
+      <div id="default-upload">
+        <svg viewBox="0 0 24 24" fill="currentColor" data-slot="icon" aria-hidden="true" class="mx-auto size-12 text-gray-300">
+          <path d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" fill-rule="evenodd"/>
+        </svg>
+        <div class="mt-4 flex text-sm/6 text-gray-600">
+          <label for="file-upload" class="relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500">
+            <span>Upload a file</span>
+            {{ field }}
+          </label>
+          <p class="pl-1">or drag and drop</p>
+        </div>
+        <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+      </div>
+      
+      <!-- File preview state (hidden by default) -->
+      <div id="file-preview" class="hidden">
+        <img id="preview-image" src="" alt="Scorecard preview" class="mx-auto max-h-64 rounded-lg shadow-lg">
+        <div class="mt-4">
+          <p id="file-name" class="text-sm font-medium text-gray-900"></p>
+          <p id="file-size" class="text-xs text-gray-500"></p>
+        </div>
+        <div class="mt-4">
+          <label for="file-upload" class="relative cursor-pointer rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Change file
+            {{ field }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if field.errors %}
+    <div class="mt-2 text-sm text-red-600">
+      {% for error in field.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('file-upload');
+    const defaultUpload = document.getElementById('default-upload');
+    const filePreview = document.getElementById('file-preview');
+    const previewImage = document.getElementById('preview-image');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Show file preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                
+                defaultUpload.classList.add('hidden');
+                filePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // Show default upload state
+            defaultUpload.classList.remove('hidden');
+            filePreview.classList.add('hidden');
+        }
+    });
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>

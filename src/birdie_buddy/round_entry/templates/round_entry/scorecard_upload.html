@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block header %}
+<div class="flex items-center justify-between">
+  <h1 class="text-lg/6 font-semibold text-gray-900">Create round</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+  <!-- Upload Form -->
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-xl mb-4">Scorecard upload</h1>
+    <form 
+      method="post" 
+      enctype="multipart/form-data"
+      class="space-y-6"
+      novalidate
+    >
+        <div>
+            <label for="{{ form.course_name.id_for_label }}" class="block text-sm/6 font-medium text-gray-900">Course name</label>
+            <div class="mt-2">
+                {{ form.course_name }}
+                {% if form.course_name.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {% for error in form.course_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% include "round_entry/scorecard_image_field.html" with field=form.scorecard_image %}
+        
+        <div class="flex justify-between">
+            <div class="w-1/3">
+                <c-a-button severity="secondary" href="{{ previous }}">
+                Back
+                </c-a-button>
+            </div>
+            <div class="w-1/3">
+                <c-button severity="primary" type="submit"> Upload </c-button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
