@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "storages",
     "crispy_forms",
     "django_htmx",
     "django_extensions",
@@ -160,3 +161,17 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_URL = "/users/login/"
+
+# Azure Storage configuration
+AZURE_CONNECTION_STRING = env("AZURE_CONNECTION_STRING")
+AZURE_CONTAINER = "scorecards"
+
+# Storage configuration (Django 4.2+)
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
