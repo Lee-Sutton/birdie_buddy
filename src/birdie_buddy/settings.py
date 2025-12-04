@@ -175,3 +175,5 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+# Google Cloud Vision configuration
+GCLOUD_VISION_API_KEY = env("GCLOUD_VISION_API_KEY")
