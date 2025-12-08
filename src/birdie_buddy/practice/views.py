@@ -34,7 +34,7 @@ class PracticeSessionCreateView(LoginRequiredMixin, View):
             form.instance.user = request.user
             form.save()
             return redirect(reverse("practice:practice_list"))
-        
+
         return render(request, "practice/practice_session_form.html", {"form": form})
 
 
@@ -78,7 +78,7 @@ class PracticeSessionDeleteView(LoginRequiredMixin, View):
         response = HttpResponse(status=200)
         response["HX-Redirect"] = reverse("practice:practice_list")
         return response
-    
+
     def delete(self, request, id):
         return self.post(request, id)
 
@@ -91,24 +91,24 @@ def enhance_notes(request):
     """
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Authentication required"}, status=401)
-    
+
     try:
         data = json.loads(request.body)
         notes = data.get("notes", "")
         practice_type = data.get("practice_type", "")
-        
+
         if not notes or not notes.strip():
             return JsonResponse({"error": "Notes cannot be empty"}, status=400)
-        
+
         service = NotesEnhancementService()
-        
+
         enhanced_notes = service.enhance_notes(notes, practice_type)
-        
+
         if enhanced_notes:
             return JsonResponse({"enhanced_notes": enhanced_notes})
         else:
             return JsonResponse({"error": "Failed to enhance notes"}, status=500)
-            
+
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid request format"}, status=400)
     except Exception as e:
