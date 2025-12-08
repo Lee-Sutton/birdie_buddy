@@ -10,6 +10,11 @@
 #   universal: false
 
 -e file:.
+annotated-types==0.7.0
+    # via pydantic
+anyio==4.12.0
+    # via httpx
+    # via openai
 asgiref==3.8.1
     # via django
     # via django-htmx
@@ -21,6 +26,8 @@ azure-storage-blob==12.27.1
 cachetools==6.2.2
     # via google-auth
 certifi==2025.11.12
+    # via httpcore
+    # via httpx
     # via requests
 cffi==2.0.0
     # via cryptography
@@ -32,6 +39,8 @@ crispy-tailwind==1.0.3
     # via birdie-buddy
 cryptography==46.0.3
     # via azure-storage-blob
+distro==1.9.0
+    # via openai
 django==5.1.4
     # via birdie-buddy
     # via cotton-heroicons
@@ -71,10 +80,22 @@ grpcio==1.76.0
     # via grpcio-status
 grpcio-status==1.76.0
     # via google-api-core
+h11==0.16.0
+    # via httpcore
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via openai
 idna==3.11
+    # via anyio
+    # via httpx
     # via requests
 isodate==0.7.2
     # via azure-storage-blob
+jiter==0.12.0
+    # via openai
+openai==2.9.0
+    # via birdie-buddy
 pillow==12.0.0
     # via birdie-buddy
 proto-plus==1.26.1
@@ -95,17 +116,32 @@ pyasn1-modules==0.4.2
     # via google-auth
 pycparser==2.23
     # via cffi
+pydantic==2.12.5
+    # via openai
+pydantic-core==2.41.5
+    # via pydantic
 requests==2.32.5
     # via azure-core
     # via birdie-buddy
     # via google-api-core
 rsa==4.9.1
     # via google-auth
+sniffio==1.3.1
+    # via openai
 sqlparse==0.5.3
     # via django
+tqdm==4.67.1
+    # via openai
 typing-extensions==4.15.0
+    # via anyio
     # via azure-core
     # via azure-storage-blob
     # via grpcio
+    # via openai
+    # via pydantic
+    # via pydantic-core
+    # via typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
 urllib3==2.5.0
     # via requests

@@ -1,11 +1,14 @@
+import json
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, View
 from django.shortcuts import redirect, render, get_object_or_404
 
 from birdie_buddy.practice.models import PracticeSession
 from .forms import PracticeSessionForm
+from .services.notes_enhancement_service import NotesEnhancementService
 
 
 class PracticeListview(LoginRequiredMixin, ListView):
@@ -78,3 +81,35 @@ class PracticeSessionDeleteView(LoginRequiredMixin, View):
     
     def delete(self, request, id):
         return self.post(request, id)
+
+
+@require_http_methods(["POST"])
+def enhance_notes(request):
+    """
+    Enhance practice session notes using LLM.
+    HTMX endpoint for AJAX requests.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+    
+    try:
+        data = json.loads(request.body)
+        notes = data.get("notes", "")
+        practice_type = data.get("practice_type", "")
+        
+        if not notes or not notes.strip():
+            return JsonResponse({"error": "Notes cannot be empty"}, status=400)
+        
+        service = NotesEnhancementService()
+        
+        enhanced_notes = service.enhance_notes(notes, practice_type)
+        
+        if enhanced_notes:
+            return JsonResponse({"enhanced_notes": enhanced_notes})
+        else:
+            return JsonResponse({"error": "Failed to enhance notes"}, status=500)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid request format"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": "An unexpected error occurred"}, status=500)

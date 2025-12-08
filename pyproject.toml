@@ -19,6 +19,7 @@ dependencies = [
     "django-storages[azure]>=1.14.6",
     "google-cloud-vision>=3.11.0",
     "requests>=2.32.5",
+    "openai>=1.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

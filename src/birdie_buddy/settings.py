@@ -20,7 +20,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialise environment variables
-env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(DEBUG=(bool, False), OPENAI_API_KEY=(str, None))
 environ.Env.read_env(BASE_DIR / "../.env")
 
 
@@ -177,3 +177,6 @@ STORAGES = {
 }
 # Google Cloud Vision configuration
 GCLOUD_VISION_API_KEY = env("GCLOUD_VISION_API_KEY")
+
+# OpenAI configuration for LLM notes enhancement
+OPENAI_API_KEY = env("OPENAI_KEY")
