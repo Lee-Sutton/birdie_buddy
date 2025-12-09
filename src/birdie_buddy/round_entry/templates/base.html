@@ -8,11 +8,74 @@
             {% block title %}Birdie Buddy{% endblock %}
         </title>
         <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+        <!-- EasyMDE CSS -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" />
+        <style>
+            /* EasyMDE custom styling to match Tailwind */
+            .EasyMDEContainer .CodeMirror {
+                border: 1px solid #d1d5db;
+                border-radius: 0 0 0.5rem 0.5rem;
+                font-size: 1rem;
+                min-height: 150px;
+                padding: 0.5rem;
+            }
+            .EasyMDEContainer .CodeMirror-focused {
+                border-color: #6366f1;
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            }
+            .EasyMDEContainer .editor-toolbar {
+                border: 1px solid #d1d5db;
+                border-bottom: none;
+                border-radius: 0.5rem 0.5rem 0 0;
+                background-color: #f9fafb;
+            }
+            .EasyMDEContainer .editor-toolbar button {
+                color: #374151;
+            }
+            .EasyMDEContainer .editor-toolbar button:hover {
+                background-color: #e5e7eb;
+                border-color: #d1d5db;
+            }
+            .EasyMDEContainer .editor-toolbar button.active {
+                background-color: #e5e7eb;
+                border-color: #9ca3af;
+            }
+            .EasyMDEContainer .editor-toolbar i.separator {
+                border-left-color: #d1d5db;
+            }
+            .EasyMDEContainer .CodeMirror .CodeMirror-placeholder {
+                color: #9ca3af;
+            }
+            .EasyMDEContainer .editor-preview {
+                background-color: #fff;
+                padding: 1rem;
+            }
+            .EasyMDEContainer .editor-preview h1 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+            }
+            .EasyMDEContainer .editor-preview h2 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+            .EasyMDEContainer .editor-preview ul {
+                list-style-type: disc;
+                padding-left: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .EasyMDEContainer .editor-preview li {
+                margin-bottom: 0.25rem;
+            }
+        </style>
         <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
         <script src="{% static 'js/radarChart.js' %}" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
                 defer></script>
-
+        <!-- EasyMDE JS -->
+        <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
         <script src="{% static 'htmx.min.js' %}" defer></script>
     </head>
     <!--
@@ -238,6 +301,44 @@
                     menuButton.setAttribute('aria-expanded', 'false');
                 }
             }
+
+            // Global EasyMDE instance
+            window.easyMDE = null;
+
+            // Initialize EasyMDE editor if the textarea exists
+            function initEasyMDE() {
+                const textarea = document.getElementById('id_notes');
+                if (textarea && typeof EasyMDE !== 'undefined') {
+                    // Destroy existing instance if present
+                    if (window.easyMDE) {
+                        window.easyMDE.toTextArea();
+                        window.easyMDE = null;
+                    }
+                    
+                    window.easyMDE = new EasyMDE({
+                        element: textarea,
+                        placeholder: 'Write your practice notes here using markdown...\n\n## Headings\n**bold** and *italic* text\n- bullet points',
+                        spellChecker: false,
+                        status: false,
+                        toolbar: [
+                            'heading-1', 'heading-2', '|',
+                            'bold', 'italic', '|',
+                            'unordered-list', '|',
+                            'preview', '|',
+                            'guide'
+                        ],
+                        minHeight: '150px',
+                        autoDownloadFontAwesome: true,
+                        forceSync: true
+                    });
+                }
+            }
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', initEasyMDE);
+
+            // Re-initialize after HTMX swaps content
+            document.addEventListener('htmx:afterSwap', initEasyMDE);
         </script>
     </body>
 </html>
