@@ -7,7 +7,8 @@ class PracticeSessionForm(forms.ModelForm):
         model = PracticeSession
         fields = ["practice_type", "outcome", "notes"]
         widgets = {
-            "notes": forms.Textarea(attrs={"rows": 4, "id": "id_notes"}),
+            # Textarea - EasyMDE will attach to this in the template
+            "notes": forms.Textarea(attrs={"id": "id_notes", "rows": 4}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -20,6 +20,8 @@ dependencies = [
     "google-cloud-vision>=3.11.0",
     "requests>=2.32.5",
     "openai>=1.0.0",
+    "bleach>=6.0.0",
+    "markdown>=3.5.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

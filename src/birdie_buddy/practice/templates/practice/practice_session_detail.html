@@ -1,8 +1,39 @@
 {% extends "base.html" %}
+{% load safe_html %}
 {% block header %}
     <h1 class="text-lg/6 font-semibold text-gray-900">Practice Session</h1>
 {% endblock header %}
 {% block content %}
+    <!-- Styles for rendered Quill content -->
+    <style>
+        .notes-content h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .notes-content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .notes-content p {
+            margin-bottom: 0.5rem;
+        }
+        .notes-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .notes-content li {
+            margin-bottom: 0.25rem;
+        }
+        .notes-content strong, .notes-content b {
+            font-weight: 600;
+        }
+        .notes-content em, .notes-content i {
+            font-style: italic;
+        }
+    </style>
     <div class="max-w-4xl mx-auto">
         <!-- Session Details -->
         <div class="overflow-hidden bg-white shadow sm:rounded-lg mb-6">
@@ -21,9 +52,7 @@
                             </c-a-button>
                         </div>
                         <div class="ml-2">
-                            <c-button severity="secondary" hx-delete="{% url 'practice:delete_session' id=session.pk %}" 
-                  hx-confirm="Are you sure you want to delete this practice session? This action cannot be undone." 
-                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                            <c-button severity="secondary" hx-delete="{% url 'practice:delete_session' id=session.pk %}" hx-confirm="Are you sure you want to delete this practice session? This action cannot be undone." hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 <c-heroicon.trash />
                             </c-button>
                         </div>
@@ -64,9 +93,9 @@
                     </div>
                     <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-900">Notes</dt>
-                        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 notes-content">
                             {% if session.notes %}
-                                {{ session.notes|linebreaks }}
+                                {{ session.notes|safe_html }}
                             {% else %}
                                 <span class="text-gray-400 italic">No notes recorded for this session.</span>
                             {% endif %}

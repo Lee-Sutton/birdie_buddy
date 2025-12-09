@@ -1,6 +1,77 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <!-- EasyMDE CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" />
+    <!-- Custom EasyMDE styling to match Tailwind -->
+    <style>
+        .EasyMDEContainer .CodeMirror {
+            border: 1px solid #d1d5db;
+            border-radius: 0 0 0.5rem 0.5rem;
+            font-size: 1rem;
+            min-height: 150px;
+            padding: 0.5rem;
+        }
+        .EasyMDEContainer .CodeMirror-focused {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .EasyMDEContainer .editor-toolbar {
+            border: 1px solid #d1d5db;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            background-color: #f9fafb;
+        }
+        .EasyMDEContainer .editor-toolbar button {
+            color: #374151;
+        }
+        .EasyMDEContainer .editor-toolbar button:hover {
+            background-color: #e5e7eb;
+            border-color: #d1d5db;
+        }
+        .EasyMDEContainer .editor-toolbar button.active {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+        }
+        .EasyMDEContainer .editor-toolbar i.separator {
+            border-left-color: #d1d5db;
+        }
+        .EasyMDEContainer .editor-statusbar {
+            border: 1px solid #d1d5db;
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        .EasyMDEContainer .CodeMirror .CodeMirror-placeholder {
+            color: #9ca3af;
+        }
+        /* Preview styling */
+        .EasyMDEContainer .editor-preview {
+            background-color: #fff;
+            padding: 1rem;
+        }
+        .EasyMDEContainer .editor-preview h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .EasyMDEContainer .editor-preview h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .EasyMDEContainer .editor-preview ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .EasyMDEContainer .editor-preview li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
     <div class="max-w-3xl mx-auto" x-data="notesEnhancer()">
         <h1 class="text-xl mb-4">
             {% if session %}
@@ -10,7 +81,7 @@
             {% endif %}
             Practice Session
         </h1>
-        <form method="post" novalidate>
+        <form method="post" novalidate id="practice-form">
             {% csrf_token %}
             <!-- Practice Type Field -->
             <div class="mb-4">
@@ -28,12 +99,12 @@
                 {{ form.outcome }}
                 {% if form.outcome.errors %}<div class="text-red-500 text-sm mt-1">{{ form.outcome.errors }}</div>{% endif %}
             </div>
-            <!-- Notes Field with Enhancement Button -->
+            <!-- Notes Field with EasyMDE Editor -->
             <div class="mb-4">
-                <label for="{{ form.notes.id_for_label }}"
-                       class="block text-sm font-medium text-gray-700 mb-1">{{ form.notes.label }}</label>
+                <label for="id_notes" class="block text-sm font-medium text-gray-700 mb-1">{{ form.notes.label }}</label>
                 <div class="relative">
-                    {{ form.notes }}
+                    <!-- Textarea for EasyMDE to attach to -->
+                    <textarea name="notes" id="id_notes">{{ form.notes.value|default:'' }}</textarea>
                     <div class="mt-2">
                         <button type="button"
                                 class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2"
@@ -45,8 +116,12 @@
                                 </svg>
                             </template>
                             <template x-if="loading">
-                                <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                <svg class="w-4 h-4 animate-spin"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                    </path>
                                 </svg>
                             </template>
                             <span x-text="loading ? 'Enhancing...' : 'Enhance Notes'"></span>
@@ -54,7 +129,7 @@
                     </div>
                 </div>
                 {% if form.notes.errors %}<div class="text-red-500 text-sm mt-1">{{ form.notes.errors }}</div>{% endif %}
-                <div x-show="error" 
+                <div x-show="error"
                      x-transition
                      class="text-red-500 text-sm mt-1"
                      x-text="error"></div>
@@ -73,18 +148,38 @@
             </div>
         </form>
     </div>
-
+    <!-- EasyMDE JS -->
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
     <script>
+    // Initialize EasyMDE editor
+    const easyMDE = new EasyMDE({
+        element: document.getElementById('id_notes'),
+        placeholder: 'Write your practice notes here using markdown...\n\n## Headings\n**bold** and *italic* text\n- bullet points',
+        spellChecker: false,
+        status: false,
+        toolbar: [
+            'heading-1', 'heading-2', '|',
+            'bold', 'italic', '|',
+            'unordered-list', '|',
+            'preview', '|',
+            'guide'
+        ],
+        minHeight: '150px',
+        autoDownloadFontAwesome: true,
+        forceSync: true
+    });
+
+    // Alpine.js component for notes enhancement
     function notesEnhancer() {
         return {
             loading: false,
             error: null,
             
             enhanceNotes() {
-                const notesTextarea = document.getElementById('id_notes');
                 const practiceTypeSelect = document.getElementById('id_practice_type');
                 
-                const notes = notesTextarea.value.trim();
+                // Get content from EasyMDE editor
+                const notes = easyMDE.value().trim();
                 const practiceType = practiceTypeSelect.options[practiceTypeSelect.selectedIndex]?.text || '';
                 
                 if (!notes) {
@@ -109,7 +204,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.enhanced_notes) {
-                        notesTextarea.value = data.enhanced_notes;
+                        // Set the enhanced notes in the editor
+                        easyMDE.value(data.enhanced_notes);
                     } else if (data.error) {
                         this.error = data.error;
                     }

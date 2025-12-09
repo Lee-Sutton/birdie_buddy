@@ -23,6 +23,8 @@ azure-core==1.36.0
     # via django-storages
 azure-storage-blob==12.27.1
     # via django-storages
+bleach==6.3.0
+    # via birdie-buddy
 cachetools==6.2.2
     # via google-auth
 certifi==2025.11.12
@@ -118,6 +120,8 @@ jsbeautifier==1.15.4
     # via djlint
 json5==0.12.0
     # via djlint
+markdown==3.10
+    # via birdie-buddy
 openai==2.9.0
     # via birdie-buddy
 packaging==24.2
@@ -207,3 +211,5 @@ typing-inspection==0.4.2
     # via pydantic
 urllib3==2.5.0
     # via requests
+webencodings==0.5.1
+    # via bleach
