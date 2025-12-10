@@ -39,10 +39,7 @@ class ScorecardUploadView(LoginRequiredMixin, View):
             )
 
             if parsed_text:
-                logger.info(
-                    f"Scorecard parsed for user {request.user.id}, "
-                    f"upload {scorecard_upload.id}. Extracted text:\n{parsed_text['text']}"
-                )
+                logger.info(f"Scorecard parsed for user {request.user.id}, ")
             else:
                 logger.warning(
                     f"Scorecard parsing failed for user {request.user.id}, "

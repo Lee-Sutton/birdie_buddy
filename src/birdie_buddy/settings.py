@@ -180,3 +180,6 @@ GCLOUD_VISION_API_KEY = env("GCLOUD_VISION_API_KEY")
 
 # OpenAI configuration for LLM notes enhancement
 OPENAI_API_KEY = env("OPENAI_KEY")
+
+# Anthropic configuration for scorecard parsing
+ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")

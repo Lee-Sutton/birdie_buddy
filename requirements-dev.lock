@@ -12,7 +12,10 @@
 -e file:.
 annotated-types==0.7.0
     # via pydantic
+anthropic==0.75.0
+    # via birdie-buddy
 anyio==4.12.0
+    # via anthropic
     # via httpx
     # via openai
 asgiref==3.8.1
@@ -48,6 +51,7 @@ cryptography==46.0.3
 cssbeautifier==1.15.4
     # via djlint
 distro==1.9.0
+    # via anthropic
     # via openai
 django==5.1.4
     # via birdie-buddy
@@ -74,6 +78,8 @@ django-storages==1.14.6
     # via birdie-buddy
 django-types==0.20.0
 djlint==1.36.4
+docstring-parser==0.17.0
+    # via anthropic
 editorconfig==0.17.1
     # via cssbeautifier
     # via jsbeautifier
@@ -103,6 +109,7 @@ h11==0.16.0
 httpcore==1.0.9
     # via httpx
 httpx==0.28.1
+    # via anthropic
     # via openai
 idna==3.11
     # via anyio
@@ -114,6 +121,7 @@ invoke==2.2.0
 isodate==0.7.2
     # via azure-storage-blob
 jiter==0.12.0
+    # via anthropic
     # via openai
 jsbeautifier==1.15.4
     # via cssbeautifier
@@ -153,6 +161,7 @@ pyasn1-modules==0.4.2
 pycparser==2.23
     # via cffi
 pydantic==2.12.5
+    # via anthropic
     # via openai
 pydantic-core==2.41.5
     # via pydantic
@@ -186,6 +195,7 @@ six==1.17.0
     # via jsbeautifier
     # via python-dateutil
 sniffio==1.3.1
+    # via anthropic
     # via openai
 sqlparse==0.5.3
     # via django
@@ -197,6 +207,7 @@ tqdm==4.67.1
 types-psycopg2==2.9.21.20241019
     # via django-types
 typing-extensions==4.15.0
+    # via anthropic
     # via anyio
     # via azure-core
     # via azure-storage-blob
