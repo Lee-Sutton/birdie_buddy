@@ -10,6 +10,9 @@ from birdie_buddy.round_entry.forms import ScorecardUploadForm
 from birdie_buddy.round_entry.services.scorecard_parser_service import (
     ScorecardParserService,
 )
+from birdie_buddy.round_entry.services.scorecard_import_service import (
+    ScorecardImportService,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,19 +37,41 @@ class ScorecardUploadView(LoginRequiredMixin, View):
 
             # Parse the uploaded scorecard image
             parser_service = ScorecardParserService()
-            parsed_text = parser_service.parse_scorecard_image(
+            scorecard_data, raw_json = parser_service.parse_scorecard_image(
                 scorecard_upload.scorecard_image
             )
 
-            if parsed_text:
-                logger.info(f"Scorecard parsed for user {request.user.id}, ")
+            # Save the raw JSON data for debugging
+            if raw_json:
+                scorecard_upload.parsed_data = raw_json
+                scorecard_upload.save()
+
+            # Create Round/Hole/Shot objects if parsing succeeded
+            if scorecard_data:
+                import_service = ScorecardImportService()
+                round_obj = import_service.create_round_from_scorecard_data(
+                    user=request.user,
+                    scorecard_upload=scorecard_upload,
+                    scorecard_data=scorecard_data,
+                )
+
+                if round_obj:
+                    logger.info(
+                        f"Scorecard parsed and round created for user {request.user.id}, "
+                        f"round {round_obj.id}"
+                    )
+                else:
+                    logger.error(
+                        f"Failed to create round from parsed data for user {request.user.id}, "
+                        f"upload {scorecard_upload.id}"
+                    )
             else:
                 logger.warning(
                     f"Scorecard parsing failed for user {request.user.id}, "
                     f"upload {scorecard_upload.id}"
                 )
 
-            return self.redirect_to_success_url()
+            return self.redirect_to_success_url(scorecard_upload.id)
 
         context = self.get_context_data()
         return render(
@@ -58,5 +83,10 @@ class ScorecardUploadView(LoginRequiredMixin, View):
         context["previous"] = reverse("round_entry:round_list")
         return context
 
-    def redirect_to_success_url(self):
-        return redirect(reverse("round_entry:round_list"))
+    def redirect_to_success_url(self, scorecard_upload_id):
+        return redirect(
+            reverse(
+                "round_entry:scorecard_review",
+                kwargs={"scorecard_upload_id": scorecard_upload_id},
+            )
+        )

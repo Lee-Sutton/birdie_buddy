@@ -261,6 +261,11 @@ class ScorecardUpload(models.Model):
     )
 
     course_name = models.CharField(max_length=256)
+    parsed_data = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="JSON data parsed from scorecard image for debugging",
+    )
 
     class Meta:
         ordering = ["-created_at"]

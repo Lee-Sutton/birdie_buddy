@@ -52,7 +52,7 @@ class ScorecardParserService:
         self.client = client or anthropic.Anthropic(api_key=self.api_key)
         self.model = "claude-sonnet-4-20250514"
 
-    def parse_scorecard_image(self, image_field) -> Optional[ScorecardData]:
+    def parse_scorecard_image(self, image_field) -> tuple[Optional[ScorecardData], Optional[dict]]:
         """
         Parse a scorecard image using Anthropic's Claude multimodal LLM.
 
@@ -60,17 +60,17 @@ class ScorecardParserService:
             image_field: Django ImageField instance (e.g., scorecard_upload.scorecard_image)
 
         Returns:
-            ScorecardData object containing parsed hole and shot data, or None if parsing fails
+            Tuple of (ScorecardData object, raw JSON dict) or (None, None) if parsing fails
         """
         if not self.api_key:
             logger.warning("Anthropic API key not configured")
-            return None
+            return None, None
 
         try:
             # Read and encode the image
             image_base64 = self._encode_image(image_field)
             if not image_base64:
-                return None
+                return None, None
 
             # Get the media type
             media_type = self._get_media_type(image_field.name)
@@ -79,14 +79,14 @@ class ScorecardParserService:
             response = self._call_llm(image_base64, media_type)
             print(response)
             if not response:
-                return None
+                return None, None
 
             # Parse the response into structured data
             return self._parse_response(response)
 
         except Exception as e:
             logger.error(f"Error parsing scorecard image: {str(e)}")
-            return None
+            return None, None
 
     def _encode_image(self, image_field) -> Optional[str]:
         """Read and base64 encode an image from storage."""
@@ -192,8 +192,8 @@ Important:
             logger.error(f"LLM API call failed: {str(e)}")
             return None
 
-    def _parse_response(self, response: str) -> Optional[ScorecardData]:
-        """Parse the LLM response into structured ScorecardData."""
+    def _parse_response(self, response: str) -> tuple[Optional[ScorecardData], Optional[dict]]:
+        """Parse the LLM response into structured ScorecardData and return raw JSON."""
         try:
             # Clean up response if it contains markdown code blocks
             cleaned_response = response.strip()
@@ -235,12 +235,13 @@ Important:
                     )
                 )
 
-            return ScorecardData(course_name=course_name, holes=holes)
+            scorecard_data = ScorecardData(course_name=course_name, holes=holes)
+            return scorecard_data, data
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse LLM response as JSON: {str(e)}")
             logger.error(f"Response was: {response}")
-            return None
+            return None, None
         except Exception as e:
             logger.error(f"Error parsing LLM response: {str(e)}")
-            return None
+            return None, None

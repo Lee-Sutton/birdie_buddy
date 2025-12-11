@@ -6,6 +6,7 @@ from .round_detail_view import RoundDetailView
 from .round_list_view import RoundListView
 from .stats_view import stats_view
 from .scorecard_upload_view import ScorecardUploadView
+from .scorecard_review_view import ScorecardReviewView
 
 __all__ = [
     "RoundCreateView",
@@ -15,6 +16,7 @@ __all__ = [
     "RoundListView",
     "stats_view",
     "ScorecardUploadView",
+    "ScorecardReviewView",
 ]
 
 

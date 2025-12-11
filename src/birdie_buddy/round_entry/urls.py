@@ -28,5 +28,14 @@ urlpatterns = [
         views.RoundDetailView.as_view(),
         name="round_detail",
     ),
-    path("rounds/upload-scorecard", views.ScorecardUploadView.as_view(), name="upload_scorecard"),
+    path(
+        "rounds/upload-scorecard",
+        views.ScorecardUploadView.as_view(),
+        name="upload_scorecard",
+    ),
+    path(
+        "rounds/scorecard/<int:scorecard_upload_id>/review",
+        views.ScorecardReviewView.as_view(),
+        name="scorecard_review",
+    ),
 ]
