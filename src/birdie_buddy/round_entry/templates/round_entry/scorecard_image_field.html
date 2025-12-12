@@ -1,4 +1,44 @@
-<div class="col-span-full" x-data="fileUpload()">
+<div class="col-span-full"
+     x-data="{
+       hasFile: false,
+       previewUrl: '',
+       fileName: '',
+       fileSize: '',
+
+       handleFileSelect(event) {
+         const file = event.target.files[0];
+         if (file) {
+           this.fileName = file.name;
+           this.fileSize = this.formatFileSize(file.size);
+
+           const reader = new FileReader();
+           reader.onload = (e) => {
+             this.previewUrl = e.target.result;
+             this.hasFile = true;
+           };
+           reader.readAsDataURL(file);
+         } else {
+           this.hasFile = false;
+           this.previewUrl = '';
+           this.fileName = '';
+           this.fileSize = '';
+         }
+       },
+
+       formatFileSize(bytes) {
+         if (bytes === 0) return '0 Bytes';
+         const k = 1024;
+         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+         const i = Math.floor(Math.log(bytes) / Math.log(k));
+         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+       }
+     }"
+     x-init="$nextTick(() => {
+       const fileInput = document.getElementById('file-upload');
+       if (fileInput) {
+         fileInput.addEventListener('change', (e) => handleFileSelect(e));
+       }
+     })">
   <label for="file-upload" class="block text-sm/6 font-medium text-gray-900">Scorecard image</label>
   <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10" id="upload-area">
     <div class="text-center" id="upload-content">
@@ -41,47 +81,3 @@
     </div>
   {% endif %}
 </div>
-
-<script>
-function fileUpload() {
-    return {
-        hasFile: false,
-        previewUrl: '',
-        fileName: '',
-        fileSize: '',
-        
-        init() {
-            const fileInput = document.getElementById('file-upload');
-            fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
-        },
-        
-        handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.fileName = file.name;
-                this.fileSize = this.formatFileSize(file.size);
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.previewUrl = e.target.result;
-                    this.hasFile = true;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                this.hasFile = false;
-                this.previewUrl = '';
-                this.fileName = '';
-                this.fileSize = '';
-            }
-        },
-        
-        formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-    }
-}
-</script>
