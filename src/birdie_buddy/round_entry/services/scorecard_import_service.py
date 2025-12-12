@@ -32,10 +32,10 @@ class ScorecardImportService:
             The created Round object, or None if creation fails
         """
         try:
-            # Create the Round
+            # Create the Round (use course_name from scorecard_upload, not parsed data)
             round_obj = Round.objects.create(
                 user=user,
-                course_name=scorecard_data.course_name,
+                course_name=scorecard_upload.course_name,
                 holes_played=scorecard_data.holes_played,
             )
 

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block header %}
+    <h1 class="text-lg/6 font-semibold text-gray-900">Review Scorecard</h1>
+{% endblock header %}
+{% block content %}
+    <div class="max-w-6xl mx-auto">
+        {% if parsing_failed %}
+            <!-- Error State -->
+            <div class="bg-red-50 rounded-lg border border-red-200 p-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-lg font-semibold text-red-800">Unable to Parse Scorecard</h3>
+                        <p class="mt-2 text-sm text-red-700">
+                            We couldn't automatically read your scorecard. This can happen if the image is unclear or the format is unusual.
+                        </p>
+                        <div class="mt-4 flex space-x-4">
+                            <c-a-button severity="primary" href="{{ manual_entry_url }}">
+                                Enter Data Manually
+                            </c-a-button>
+                            <c-a-button severity="secondary" href="{% url 'round_entry:upload_scorecard' %}">
+                                Try Another Photo
+                            </c-a-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Success State -->
+            <div class="mb-6 bg-green-50 rounded-lg border border-green-200 p-4">
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <p class="text-sm text-green-700">
+                        Scorecard successfully parsed! Review the data below and make any necessary edits.
+                    </p>
+                </div>
+            </div>
+            <!-- Course Header -->
+            <div class="mb-6 bg-white rounded-lg border shadow-sm">
+                <div class="p-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">{{ round.course_name }}</h2>
+                            <p class="text-sm text-gray-500">{{ round.holes_played }} holes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Holes Table -->
+            <div class="bg-white rounded-lg border shadow-sm">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Holes & Shots</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Par</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shots</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for hole in holes %}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ hole.number }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hole.par }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ hole.score }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        <div class="space-y-1">
+                                            {% for shot in hole.shot_set.all %}
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                                        Shot {{ shot.number }}
+                                                    </span>
+                                                    <span class="text-xs">
+                                                        {{ shot.start_distance }}{% if shot.lie == "green" %}ft{% else %}yds{% endif %}
+                                                    </span>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ shot.get_lie_display }}
+                                                    </span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <a href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}"
+                                           class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                            Edit Hole
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Action Buttons -->
+            <div class="mt-6 space-x-6 flex justify-between">
+                <c-a-button severity="secondary" href="{% url 'round_entry:upload_scorecard' %}">
+                    Back to Upload
+                </c-a-button>
+                <c-a-button severity="primary" href="{{ round_detail_url }}">
+                    Continue to Round Details
+                </c-a-button>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

@@ -34,7 +34,6 @@ class HoleData:
 class ScorecardData:
     """Data class representing parsed scorecard data."""
 
-    course_name: str
     holes: list[HoleData]
 
     @property
@@ -207,7 +206,6 @@ Important:
 
             data = json.loads(cleaned_response)
 
-            course_name = data.get("course_name", "Unknown Course")
             holes = []
 
             for hole_data in data.get("holes", []):
@@ -235,7 +233,7 @@ Important:
                     )
                 )
 
-            scorecard_data = ScorecardData(course_name=course_name, holes=holes)
+            scorecard_data = ScorecardData(holes=holes)
             return scorecard_data, data
 
         except json.JSONDecodeError as e:

@@ -9,13 +9,15 @@
 {% block content %}
 
   <!-- Upload Form -->
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto" x-data="{ isUploading: false, currentMessage: 0, messages: ['📸 Analyzing your scorecard...', '🏌️ Detecting shots and scores...', '🎯 Calculating distances...', '✨ Almost there...'] }">
     <h1 class="text-xl mb-4">Scorecard upload</h1>
-    <form 
-      method="post" 
+    <form
+      method="post"
       enctype="multipart/form-data"
       class="space-y-6"
       novalidate
+      @htmx:before-request="isUploading = true; currentMessage = 0; messageInterval = setInterval(() => { currentMessage = (currentMessage + 1) % messages.length; }, 1500)"
+      @htmx:after-request="isUploading = false; clearInterval(messageInterval)"
     >
         <div>
             <label for="{{ form.course_name.id_for_label }}" class="block text-sm/6 font-medium text-gray-900">Course name</label>
@@ -40,9 +42,63 @@
                 </c-a-button>
             </div>
             <div class="w-1/3">
-                <c-button severity="primary" type="submit"> Upload </c-button>
+                <c-button severity="primary" type="submit" :disabled="isUploading"> Upload </c-button>
             </div>
         </div>
     </form>
+
+    <!-- Loading Overlay -->
+    <div
+      x-show="isUploading"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm"
+      style="display: none;"
+    >
+        <div
+          x-show="isUploading"
+          x-transition:enter="transition ease-out duration-300 delay-100"
+          x-transition:enter-start="opacity-0 scale-95"
+          x-transition:enter-end="opacity-100 scale-100"
+          class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4"
+        >
+            <!-- Animated Golf Icon -->
+            <div class="flex justify-center mb-6">
+                <div class="relative">
+                    <!-- Bouncing golf ball -->
+                    <div class="animate-bounce">
+                        <svg class="w-16 h-16 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <circle cx="9" cy="9" r="1.5" fill="white" opacity="0.3" />
+                            <circle cx="15" cy="10" r="1.5" fill="white" opacity="0.3" />
+                            <circle cx="10" cy="14" r="1.5" fill="white" opacity="0.3" />
+                            <circle cx="14" cy="15" r="1.5" fill="white" opacity="0.3" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Message -->
+            <div class="text-center">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Your Scorecard</h3>
+                <p
+                  x-text="messages[currentMessage]"
+                  class="text-gray-600 transition-all duration-500"
+                ></p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-6">
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-600 rounded-full animate-pulse" style="width: 75%;"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 text-center">This usually takes a few seconds...</p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
