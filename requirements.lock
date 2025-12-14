@@ -110,6 +110,9 @@ openai==2.9.0
     # via birdie-buddy
 pillow==12.0.0
     # via birdie-buddy
+    # via pillow-heif
+pillow-heif==1.1.1
+    # via birdie-buddy
 proto-plus==1.26.1
     # via google-api-core
     # via google-cloud-vision

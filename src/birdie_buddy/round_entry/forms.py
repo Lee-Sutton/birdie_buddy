@@ -1,8 +1,10 @@
 from crispy_forms.helper import FormHelper, Layout
 from crispy_forms.layout import Field, Div
 from django import forms
+from django.core.exceptions import ValidationError
 
 from birdie_buddy.round_entry.models import Shot
+from birdie_buddy.round_entry.services.image_processing_service import ImageProcessingService
 
 
 class ShotForm(forms.ModelForm):
@@ -44,5 +46,23 @@ class ScorecardUploadForm(forms.Form):
             }
         )
         self.fields["scorecard_image"].widget.attrs.update(
-            {"class": "sr-only", "id": "file-upload"}
+            {"class": "sr-only", "id": "file-upload", "accept": "image/jpeg,image/jpg,image/png,image/gif,image/heic,image/heif"}
         )
+
+    def clean_scorecard_image(self):
+        """Process the uploaded image to ensure compatibility with Claude API."""
+        uploaded_file = self.cleaned_data.get('scorecard_image')
+
+        if not uploaded_file:
+            return uploaded_file
+
+        # Process the image (convert HEIC, resize, compress)
+        processed_file = ImageProcessingService.process_image(uploaded_file)
+
+        if processed_file is None:
+            raise ValidationError(
+                "Unable to process the uploaded image. Please try a different image or "
+                "ensure the file is a valid image format (JPG, PNG, GIF, or HEIC)."
+            )
+
+        return processed_file

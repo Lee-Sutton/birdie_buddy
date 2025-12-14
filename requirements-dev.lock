@@ -138,6 +138,9 @@ pathspec==0.12.1
     # via djlint
 pillow==12.0.0
     # via birdie-buddy
+    # via pillow-heif
+pillow-heif==1.1.1
+    # via birdie-buddy
 playwright==1.56.0
     # via pytest-playwright
 pluggy==1.5.0
