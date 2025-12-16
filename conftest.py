@@ -1,5 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
+from playwright.sync_api import Page
+import os
 
 User = get_user_model()
 
@@ -13,3 +15,22 @@ def user(db):
 def authenticated_client(client, user):
     client.login(username="testuser", password="testpass123")
     return client
+
+
+@pytest.fixture(scope="function")
+def authenticated_page(page: Page, live_server, user):
+    """Create an authenticated Playwright page instance."""
+    # Go to login page
+    page.goto(f"{live_server.url}/users/login/")
+
+    # Fill login form
+    page.get_by_label("Username").fill("testuser")
+    page.get_by_label("Password").fill("testpass123")
+
+    # Submit form
+    page.get_by_role("button", name="Log In").click()
+
+    # Wait for navigation to complete
+    page.wait_for_url(f"{live_server.url}/**")
+
+    return page
