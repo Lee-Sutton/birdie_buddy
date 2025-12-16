@@ -115,7 +115,12 @@ class ScorecardParserService:
 
     def _build_system_prompt(self) -> str:
         """Build the system prompt for scorecard parsing."""
-        return """You are a golf scorecard parser. Analyze the scorecard image and extract the following information for each hole played:
+        return """You are a golf scorecard parser.
+
+IMPORTANT: The scorecard image may be rotated or oriented in any direction (upside down, sideways, etc.).
+Please analyze the image regardless of its orientation and extract the data correctly.
+
+Analyze the scorecard image and extract the following information for each hole played:
 1. Hole number (1-18)
 2. Par for the hole (3, 4, or 5)
 3. Score (total strokes for the hole)
