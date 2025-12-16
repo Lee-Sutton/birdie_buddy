@@ -13,7 +13,7 @@ register_heif_opener()
 
 
 class ImageProcessingService:
-    """Service for processing scorecard images before sending to Claude API."""
+    """Service for processing scorecard images before sending to LLM API."""
 
     MAX_FILE_SIZE_MB = 5
     MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -42,21 +42,27 @@ class ImageProcessingService:
             image = Image.open(uploaded_file)
 
             # Convert to RGB (required for JPEG, handles HEIC and PNG with transparency)
-            if image.mode in ('RGBA', 'LA', 'P'):
+            if image.mode in ("RGBA", "LA", "P"):
                 # Create white background for images with transparency
-                background = Image.new('RGB', image.size, (255, 255, 255))
-                if image.mode == 'P':
-                    image = image.convert('RGBA')
-                background.paste(image, mask=image.split()[-1] if image.mode in ('RGBA', 'LA') else None)
+                background = Image.new("RGB", image.size, (255, 255, 255))
+                if image.mode == "P":
+                    image = image.convert("RGBA")
+                background.paste(
+                    image,
+                    mask=image.split()[-1] if image.mode in ("RGBA", "LA") else None,
+                )
                 image = background
-            elif image.mode != 'RGB':
-                image = image.convert('RGB')
+            elif image.mode != "RGB":
+                image = image.convert("RGB")
 
             # Resize if needed (maintain aspect ratio)
             if max(image.size) > ImageProcessingService.MAX_DIMENSION:
                 image.thumbnail(
-                    (ImageProcessingService.MAX_DIMENSION, ImageProcessingService.MAX_DIMENSION),
-                    Image.Resampling.LANCZOS
+                    (
+                        ImageProcessingService.MAX_DIMENSION,
+                        ImageProcessingService.MAX_DIMENSION,
+                    ),
+                    Image.Resampling.LANCZOS,
                 )
                 logger.info(f"Resized image to {image.size}")
 
@@ -68,7 +74,7 @@ class ImageProcessingService:
                 output.seek(0)
                 output.truncate()
 
-                image.save(output, format='JPEG', quality=quality, optimize=True)
+                image.save(output, format="JPEG", quality=quality, optimize=True)
                 file_size = output.tell()
 
                 if file_size <= ImageProcessingService.MAX_FILE_SIZE_BYTES:
@@ -81,14 +87,24 @@ class ImageProcessingService:
                 quality -= 5
             else:
                 # If we couldn't get under 5MB even at MIN_QUALITY, try more aggressive resize
-                logger.warning("Could not compress to 5MB, attempting more aggressive resize")
+                logger.warning(
+                    "Could not compress to 5MB, attempting more aggressive resize"
+                )
                 scale_factor = 0.8
-                new_size = (int(image.size[0] * scale_factor), int(image.size[1] * scale_factor))
+                new_size = (
+                    int(image.size[0] * scale_factor),
+                    int(image.size[1] * scale_factor),
+                )
                 image = image.resize(new_size, Image.Resampling.LANCZOS)
 
                 output.seek(0)
                 output.truncate()
-                image.save(output, format='JPEG', quality=ImageProcessingService.MIN_QUALITY, optimize=True)
+                image.save(
+                    output,
+                    format="JPEG",
+                    quality=ImageProcessingService.MIN_QUALITY,
+                    optimize=True,
+                )
                 file_size = output.tell()
 
                 if file_size > ImageProcessingService.MAX_FILE_SIZE_BYTES:
@@ -102,11 +118,11 @@ class ImageProcessingService:
             output.seek(0)
             processed_file = InMemoryUploadedFile(
                 file=output,
-                field_name='scorecard_image',
+                field_name="scorecard_image",
                 name=ImageProcessingService._get_output_filename(uploaded_file.name),
-                content_type='image/jpeg',
+                content_type="image/jpeg",
                 size=output.tell(),
-                charset=None
+                charset=None,
             )
 
             return processed_file
@@ -119,5 +135,6 @@ class ImageProcessingService:
     def _get_output_filename(original_filename: str) -> str:
         """Convert original filename to .jpg extension."""
         import os
+
         name_without_ext = os.path.splitext(original_filename)[0]
         return f"{name_without_ext}.jpg"
