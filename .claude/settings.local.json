@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python manage.py:*)",
       "Bash(rye run pytest:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebSearch",
+      "Bash(rye sync:*)"
     ],
     "deny": [],
     "ask": []
