@@ -1,103 +1,118 @@
+import os
+from pathlib import Path
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from playwright.sync_api import Page, expect
-import os
+from playwright.sync_api import Page
+
+from birdie_buddy.round_entry.services.scorecard_parser_service import (
+    ScorecardData,
+    HoleData,
+    ShotData,
+)
 
 User = get_user_model()
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "True"
 
 
-@pytest.fixture(scope="function")
-def user(db):
-    """Create a test user for E2E testing."""
-    return User.objects.create_user(
-        username="testuser", email="testuser@example.com", password="testpass123"
+@pytest.fixture
+def mock_scorecard_parser():
+    """Mock the Claude API call to avoid costs during e2e tests."""
+    mock_scorecard_data = ScorecardData(
+        holes=[
+            HoleData(
+                number=1,
+                par=4,
+                score=5,
+                shots=[
+                    ShotData(number=1, start_distance=380, lie="tee"),
+                    ShotData(number=2, start_distance=150, lie="fairway"),
+                    ShotData(number=3, start_distance=25, lie="green"),
+                    ShotData(number=4, start_distance=8, lie="green"),
+                    ShotData(number=5, start_distance=2, lie="green"),
+                ],
+            ),
+            HoleData(
+                number=2,
+                par=3,
+                score=4,
+                shots=[
+                    ShotData(number=1, start_distance=165, lie="tee"),
+                    ShotData(number=2, start_distance=20, lie="rough"),
+                    ShotData(number=3, start_distance=12, lie="green"),
+                    ShotData(number=4, start_distance=3, lie="green"),
+                ],
+            ),
+        ]
     )
 
+    # Mock raw JSON that would be returned from Claude
+    mock_raw_json = {
+        "holes": [
+            {
+                "number": 1,
+                "par": 4,
+                "shots": [
+                    {"number": 1, "start_distance": 380, "lie": "tee"},
+                    {"number": 2, "start_distance": 150, "lie": "fairway"},
+                    {"number": 3, "start_distance": 25, "lie": "green"},
+                    {"number": 4, "start_distance": 8, "lie": "green"},
+                    {"number": 5, "start_distance": 2, "lie": "green"},
+                ],
+            },
+            {
+                "number": 2,
+                "par": 3,
+                "shots": [
+                    {"number": 1, "start_distance": 165, "lie": "tee"},
+                    {"number": 2, "start_distance": 20, "lie": "rough"},
+                    {"number": 3, "start_distance": 12, "lie": "green"},
+                    {"number": 4, "start_distance": 3, "lie": "green"},
+                ],
+            },
+        ]
+    }
 
-@pytest.fixture(scope="function")
-def authenticated_page(page: Page, live_server, user):
-    """Create an authenticated Playwright page instance."""
-    # Go to login page
-    page.goto(f"{live_server.url}/users/login/")
-
-    # Fill login form
-    page.get_by_label("Username").fill("testuser")
-    page.get_by_label("Password").fill("testpass123")
-
-    # Submit form
-    page.get_by_role("button", name="Log In").click()
-
-    # Wait for navigation to complete
-    page.wait_for_url(f"{live_server.url}/**")
-
-    return page
+    # Mock where the class is instantiated and used, not where it's defined
+    with patch(
+        "birdie_buddy.round_entry.services.scorecard_parser_service.ScorecardParserService.parse_scorecard_image"
+    ) as mock:
+        mock.return_value = (mock_scorecard_data, mock_raw_json)
+        yield mock
 
 
-def test_scorecard_upload_page_loads(authenticated_page: Page, live_server):
+def test_scorecard_upload_page_loads(
+    authenticated_page: Page, live_server, mock_scorecard_parser, user
+):
     """Test that the scorecard upload page loads correctly for authenticated users."""
     # Go to rounds list page (assuming this is where upload functionality is)
+    authenticated_page.set_default_timeout(3000)
     url = reverse("round_entry:round_list")
     authenticated_page.goto(f"{live_server.url}/{url}")
     authenticated_page.get_by_role("button", name="Create New").click()
     authenticated_page.get_by_role("menuitem", name="Upload scorecard").click()
 
-    # Look for scorecard upload functionality (adjust selector as needed)
-    # This is a basic example - adjust based on your actual UI
-    page_content = authenticated_page.content()
-    assert (
-        "Scorecard" in page_content
-        or "Upload" in page_content
-        or "Round" in page_content
+    authenticated_page.get_by_role("textbox", name="Course name").fill("sunshine coast")
+
+    # Use absolute path for test image
+    test_dir = Path(__file__).parent
+    image_path = test_dir / "images" / "scorecard.jpg"
+
+    # Upload the file - use element_handle to bypass Playwright's actionability checks
+    # The input is hidden with class="hidden" which Playwright won't interact with normally
+    element_handle = authenticated_page.query_selector("input[name='scorecard_image']")
+    element_handle.set_input_files(str(image_path))
+
+    authenticated_page.get_by_role("button", name="Upload").click()
+
+    # Wait for the upload to process (the loading overlay should appear and disappear)
+    # Or wait for navigation to the review page
+    authenticated_page.wait_for_url("**/review", timeout=10000)
+
+    # Verify the mock was called (Claude API was NOT called)
+    assert mock_scorecard_parser.called, (
+        "Claude API mock was not called - the upload may have failed"
     )
-
-
-# TODO: move the following tests to the users app
-def test_login_flow(page: Page, live_server, user):
-    """Test the login flow directly."""
-    # Go to login page
-    page.goto(f"{live_server.url}/users/login/")
-
-    # Verify login form is present
-    expect(page.get_by_label("Username")).to_be_visible()
-    expect(page.get_by_label("Password")).to_be_visible()
-
-    # Fill and submit login form
-    page.get_by_label("Username").fill("testuser")
-    page.get_by_label("Password").fill("testpass123")
-    page.get_by_role("button", name="Log In").click()
-
-    # Verify successful login (redirected away from login page)
-    expect(page).not_to_have_url(f"{live_server.url}/users/login/")
-    expect(page.get_by_text("Dashboard")).to_be_visible()
-
-
-def test_unauthorized_access_redirects_to_login(page: Page, live_server):
-    """Test that unauthenticated users are redirected to login."""
-    # Try to access a protected page
-    page.goto(f"{live_server.url}/")
-
-    # Should be redirected to login or see login prompt
-    # Adjust this assertion based on your app's authentication behavior
-    current_url = page.url
-    assert "login" in current_url.lower() or page.get_by_text("Log In").is_visible()
-
-
-def test_signup_flow(page: Page, live_server):
-    """Test user registration flow."""
-    # Go to signup page
-    page.goto(f"{live_server.url}/users/signup/")
-
-    # Fill signup form (adjust field names based on your form)
-    page.get_by_label("Username").fill("newuser")
-    page.get_by_label("Email").fill("newuser@example.com")
-    page.get_by_role("textbox", name="Password", exact=True).fill("newpass123")
-    page.get_by_role("textbox", name="Password confirmation").fill("newpass123")
-
-    # Submit form
-    page.get_by_role("button", name="Sign up").click()
-
-    # Verify successful registration (redirected or logged in)
-    expect(page).not_to_have_url(f"{live_server.url}/users/signup/")

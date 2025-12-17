@@ -46,7 +46,7 @@ class ScorecardUploadForm(forms.Form):
             }
         )
         self.fields["scorecard_image"].widget.attrs.update(
-            {"class": "sr-only", "id": "file-upload", "accept": "image/jpeg,image/jpg,image/png,image/gif,image/heic,image/heif"}
+            {"class": "hidden", "id": "file-upload", "accept": "image/jpeg,image/jpg,image/png,image/gif,image/heic,image/heif"}
         )
 
     def clean_scorecard_image(self):
