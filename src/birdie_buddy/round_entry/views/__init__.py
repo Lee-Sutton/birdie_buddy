@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .round_create_view import RoundCreateView
 from .hole_create_view import HoleCreateView
+from .hole_delete_view import HoleDeleteView
 from .shot_create_view import ShotCreateView
 from .round_detail_view import RoundDetailView
 from .round_list_view import RoundListView
@@ -11,6 +12,7 @@ from .scorecard_review_view import ScorecardReviewView
 __all__ = [
     "RoundCreateView",
     "HoleCreateView",
+    "HoleDeleteView",
     "ShotCreateView",
     "RoundDetailView",
     "RoundListView",

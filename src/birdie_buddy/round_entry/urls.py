@@ -38,4 +38,9 @@ urlpatterns = [
         views.ScorecardReviewView.as_view(),
         name="scorecard_review",
     ),
+    path(
+        "rounds/<int:round_id>/holes/<int:hole_id>/delete",
+        views.HoleDeleteView.as_view(),
+        name="delete_hole",
+    ),
 ]
