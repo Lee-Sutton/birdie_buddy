@@ -61,24 +61,39 @@
             <!-- Holes Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for hole in holes %}
-                    <div id="hole-card-{{ hole.id }}" class="bg-white rounded-lg border shadow-sm flex flex-col">
+                    <div id="hole-card-{{ hole.id }}"
+                         class="bg-white rounded-lg border shadow-sm flex flex-col">
                         <!-- Card Header -->
                         <div class="p-4 border-b">
                             <div class="flex justify-between items-center">
-                                <h3 class="text-xl font-bold text-gray-900">Hole {{ hole.number }}</h3>
-                                <span class="text-base font-medium text-gray-500">Par {{ hole.par }}</span>
+                                <div>
+                                    <div class="text-xs text-center font-medium text-gray-500 uppercase">Hole</div>
+                                    <div class="text-2xl font-bold text-center text-gray-900 ml-1">{{ hole.number }}</div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <c-a-button severity="secondary" size="sm" href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}" title="Edit Hole">
+                                        <c-heroicon.pencil />
+                                    </c-a-button>
+                                    <c-button severity="secondary" size="sm" hx-delete="{% url 'round_entry:delete_hole' round_id=round.id hole_id=hole.id %}" hx-target="#hole-card-{{ hole.id }}" hx-swap="outerHTML swap:300ms" hx-confirm="Are you sure you want to delete Hole {{ hole.number }}? All shots for this hole will also be deleted. This action cannot be undone." title="Delete Hole">
+                                        <c-heroicon.trash />
+                                    </c-button>
+                                </div>
                             </div>
                         </div>
                         <!-- Card Body -->
                         <div class="p-4 flex-grow">
                             <!-- Main Stats -->
-                            <div class="grid grid-cols-2 gap-4 mb-4 text-center">
+                            <div class="grid grid-cols-3 gap-4 mb-4 text-center">
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase tracking-wider">Score</p>
                                     <p class="text-2xl font-semibold text-gray-800">{{ hole.score }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-500 uppercase tracking-wider">Strokes Gained</p>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider">Par</p>
+                                    <p class="text-2xl font-semibold text-gray-800">{{ hole.par }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider">S.G</p>
                                     <p class="text-2xl font-semibold {% if hole.strokes_gained > 0 %}text-green-600{% elif hole.strokes_gained < 0 %}text-red-600{% else %}text-gray-800{% endif %}">
                                         {{ hole.strokes_gained|floatformat:2 }}
                                     </p>
@@ -95,28 +110,17 @@
                                                     {{ shot.get_shot_type_display|default_if_none:shot.get_lie_display }}
                                                 </span>
                                                 <span class="text-gray-600">
-                                                    {{ shot.start_distance }}{% if shot.is_putt %}ft{% else %}yds{% endif %}
+                                                    {{ shot.start_distance }}
+                                                    {% if shot.is_putt %}
+                                                        ft
+                                                    {% else %}
+                                                        yds
+                                                    {% endif %}
                                                 </span>
                                             </div>
                                         </div>
                                     {% endfor %}
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Card Footer -->
-                        <div class="p-3 bg-gray-50 rounded-b-lg mt-auto">
-                            <div class="flex items-center justify-end space-x-2">
-                                <c-a-button severity="primary" size="sm" href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}">
-                                    Edit
-                                </c-a-button>
-                                <c-button severity="danger"
-                                          size="sm"
-                                          hx-delete="{% url 'round_entry:delete_hole' round_id=round.id hole_id=hole.id %}"
-                                          hx-target="#hole-card-{{ hole.id }}"
-                                          hx-swap="outerHTML swap:300ms"
-                                          hx-confirm="Are you sure you want to delete Hole {{ hole.number }}? All shots for this hole will also be deleted. This action cannot be undone.">
-                                    Delete
-                                </c-button>
                             </div>
                         </div>
                     </div>
