@@ -63,6 +63,14 @@ class HoleCreateView(LoginRequiredMixin, View):
         context = {}
         context["number"] = number
         context["id"] = id
+
+        # Pass through return_to parameters for form submission
+        return_to = self.request.GET.get('return_to')
+        scorecard_upload_id = self.request.GET.get('scorecard_upload_id')
+        if return_to and scorecard_upload_id:
+            context["return_to"] = return_to
+            context["scorecard_upload_id"] = scorecard_upload_id
+
         if hole is None:
             context["complete"] = False
         else:
@@ -78,4 +86,27 @@ class HoleCreateView(LoginRequiredMixin, View):
         return context
 
     def redirect_to_success_url(self):
+        # Check both GET (initial) and POST (form submission) for parameters
+        return_to = self.request.GET.get('return_to') or self.request.POST.get('return_to')
+        scorecard_upload_id = self.request.GET.get('scorecard_upload_id') or self.request.POST.get('scorecard_upload_id')
+
+        if return_to == 'scorecard_review' and scorecard_upload_id:
+            # Verify the scorecard belongs to the user before redirecting (security)
+            from birdie_buddy.round_entry.models import ScorecardUpload
+            try:
+                ScorecardUpload.objects.get(
+                    pk=scorecard_upload_id,
+                    user=self.request.user
+                )
+                return redirect(
+                    reverse(
+                        "round_entry:scorecard_review",
+                        kwargs={"scorecard_upload_id": scorecard_upload_id}
+                    )
+                )
+            except ScorecardUpload.DoesNotExist:
+                # Fall through to default behavior if invalid ID
+                pass
+
+        # Default behavior: redirect to shot creation
         return redirect(reverse("round_entry:create_shots", kwargs=self.kwargs))

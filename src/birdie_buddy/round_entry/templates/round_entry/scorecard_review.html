@@ -71,7 +71,7 @@
                                     <div class="text-2xl font-bold text-center text-gray-900 ml-1">{{ hole.number }}</div>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <c-a-button severity="secondary" size="sm" href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}" title="Edit Hole">
+                                    <c-a-button severity="secondary" size="sm" href="{% url 'round_entry:create_hole' id=round.id number=hole.number %}?return_to=scorecard_review&scorecard_upload_id={{ scorecard_upload.id }}" title="Edit Hole">
                                         <c-heroicon.pencil />
                                     </c-a-button>
                                     <c-button severity="secondary" size="sm" hx-delete="{% url 'round_entry:delete_hole' round_id=round.id hole_id=hole.id %}" hx-target="#hole-card-{{ hole.id }}" hx-swap="outerHTML swap:300ms" hx-confirm="Are you sure you want to delete Hole {{ hole.number }}? All shots for this hole will also be deleted. This action cannot be undone." title="Delete Hole">
@@ -80,7 +80,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Card Body -->
                         <div class="p-4 flex-grow">
                             <!-- Main Stats -->
                             <div class="grid grid-cols-3 gap-4 mb-4 text-center">

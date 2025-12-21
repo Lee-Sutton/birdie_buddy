@@ -133,3 +133,74 @@ class TestHoleCreateView:
         assert response2.status_code == 200
         prev_url = reverse("round_entry:create_shots", kwargs={"id": round.pk, "number": 1})
         assert prev_url in response2.content.decode()
+
+    def test_redirect_to_scorecard_review_with_query_params(
+        self, authenticated_client, round, user
+    ):
+        """Test that hole edit redirects to scorecard review when query params are present."""
+        from birdie_buddy.round_entry.models import ScorecardUpload
+
+        # Create a scorecard upload linked to this round
+        scorecard = ScorecardUpload.objects.create(
+            user=user,
+            round=round,
+            course_name=round.course_name,
+            scorecard_image="test.jpg"
+        )
+
+        url = reverse("round_entry:create_hole", kwargs={"id": round.pk, "number": 1})
+        url += f"?return_to=scorecard_review&scorecard_upload_id={scorecard.id}"
+
+        data = {"score": 4, "mental_scorecard": 4, "par": 4}
+        response = authenticated_client.post(url, data)
+
+        assert response.status_code == 302
+        expected_url = reverse(
+            "round_entry:scorecard_review",
+            kwargs={"scorecard_upload_id": scorecard.id}
+        )
+        assert expected_url in response.url
+
+    def test_redirect_to_shots_without_query_params(
+        self, authenticated_client, round, user
+    ):
+        """Test that hole edit redirects to shots view when no query params (normal flow)."""
+        url = reverse("round_entry:create_hole", kwargs={"id": round.pk, "number": 1})
+
+        data = {"score": 4, "mental_scorecard": 4, "par": 4}
+        response = authenticated_client.post(url, data)
+
+        assert response.status_code == 302
+        expected_url = reverse(
+            "round_entry:create_shots",
+            kwargs={"id": round.pk, "number": 1}
+        )
+        assert expected_url in response.url
+
+    def test_query_params_preserved_on_form_error(
+        self, authenticated_client, round, user
+    ):
+        """Test that query params are preserved when form has validation errors."""
+        from birdie_buddy.round_entry.models import ScorecardUpload
+
+        scorecard = ScorecardUpload.objects.create(
+            user=user,
+            round=round,
+            course_name=round.course_name,
+            scorecard_image="test.jpg"
+        )
+
+        url = reverse("round_entry:create_hole", kwargs={"id": round.pk, "number": 1})
+        url += f"?return_to=scorecard_review&scorecard_upload_id={scorecard.id}"
+
+        # Invalid data (score = 0 should fail validation)
+        data = {"score": 0, "mental_scorecard": 4, "par": 4}
+        response = authenticated_client.post(url, data)
+
+        # Should re-render form (not redirect)
+        assert response.status_code == 200
+        assert "form" in response.context
+
+        # Context should preserve query params for re-submission
+        assert response.context.get("return_to") == "scorecard_review"
+        assert response.context.get("scorecard_upload_id") == str(scorecard.id)

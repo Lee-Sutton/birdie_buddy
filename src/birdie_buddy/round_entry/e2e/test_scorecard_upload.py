@@ -19,6 +19,13 @@ os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "True"
 
 
 @pytest.fixture
+def scorecard_image_path():
+    """Return the path to the test scorecard image."""
+    test_dir = Path(__file__).parent
+    return test_dir / "images" / "scorecard.jpg"
+
+
+@pytest.fixture
 def mock_scorecard_parser():
     """Mock the Claude API call to avoid costs during e2e tests."""
     mock_scorecard_data = ScorecardData(
@@ -85,7 +92,7 @@ def mock_scorecard_parser():
 
 
 def test_scorecard_upload_page_loads(
-    authenticated_page: Page, live_server, mock_scorecard_parser, user
+    authenticated_page: Page, live_server, mock_scorecard_parser, user, scorecard_image_path
 ):
     """Test that the scorecard upload page loads correctly for authenticated users."""
     # Go to rounds list page (assuming this is where upload functionality is)
@@ -97,14 +104,10 @@ def test_scorecard_upload_page_loads(
 
     authenticated_page.get_by_role("textbox", name="Course name").fill("sunshine coast")
 
-    # Use absolute path for test image
-    test_dir = Path(__file__).parent
-    image_path = test_dir / "images" / "scorecard.jpg"
-
     # Upload the file - use element_handle to bypass Playwright's actionability checks
     # The input is hidden with class="hidden" which Playwright won't interact with normally
     element_handle = authenticated_page.query_selector("input[name='scorecard_image']")
-    element_handle.set_input_files(str(image_path))
+    element_handle.set_input_files(str(scorecard_image_path))
 
     authenticated_page.get_by_role("button", name="Upload").click()
 
@@ -116,3 +119,49 @@ def test_scorecard_upload_page_loads(
     assert mock_scorecard_parser.called, (
         "Claude API mock was not called - the upload may have failed"
     )
+
+
+def test_edit_hole_from_scorecard_review_redirects_back(
+    authenticated_page: Page, live_server, mock_scorecard_parser, user, scorecard_image_path
+):
+    """Test that editing a hole from scorecard review returns to scorecard review."""
+    authenticated_page.set_default_timeout(3000)
+
+    # Navigate to upload and complete upload flow
+    url = reverse("round_entry:round_list")
+    authenticated_page.goto(f"{live_server.url}/{url}")
+    authenticated_page.get_by_role("button", name="Create New").click()
+    authenticated_page.get_by_role("menuitem", name="Upload scorecard").click()
+
+    authenticated_page.get_by_role("textbox", name="Course name").fill("Test Course")
+
+    element_handle = authenticated_page.query_selector("input[name='scorecard_image']")
+    element_handle.set_input_files(str(scorecard_image_path))
+
+    authenticated_page.get_by_role("button", name="Upload").click()
+    authenticated_page.wait_for_url("**/review", timeout=10000)
+
+    # Click edit button on first hole (find by href pattern)
+    authenticated_page.locator('a[href*="holes/1/create"]').first.click()
+
+    # Should navigate to hole edit form
+    authenticated_page.wait_for_selector("h1:has-text('Hole 1')")
+
+    # Verify URL contains query parameters
+    edit_url = authenticated_page.url
+    assert "return_to=scorecard_review" in edit_url
+    assert "scorecard_upload_id=" in edit_url
+
+    # Edit the hole (change par and score using field IDs to avoid ambiguity)
+    authenticated_page.locator("#id_par").fill("5")
+    authenticated_page.locator("#id_score").fill("6")
+    authenticated_page.locator("#id_mental_scorecard").fill("6")
+    authenticated_page.get_by_role("button", name="Add shots").click()
+
+    # Should redirect back to scorecard review page
+    authenticated_page.wait_for_url("**/review", timeout=5000)
+    final_url = authenticated_page.url
+
+    # Verify we're back at the review page
+    assert "/scorecard/" in final_url and "/review" in final_url
+    assert "Review Scorecard" in authenticated_page.content()
