@@ -12,6 +12,7 @@ from birdie_buddy.round_entry.services.scorecard_parser_service import (
     HoleData,
     ShotData,
 )
+from birdie_buddy.round_entry.models import Hole, Round
 
 User = get_user_model()
 
@@ -92,7 +93,11 @@ def mock_scorecard_parser():
 
 
 def test_scorecard_upload_page_loads(
-    authenticated_page: Page, live_server, mock_scorecard_parser, user, scorecard_image_path
+    authenticated_page: Page,
+    live_server,
+    mock_scorecard_parser,
+    user,
+    scorecard_image_path,
 ):
     """Test that the scorecard upload page loads correctly for authenticated users."""
     # Go to rounds list page (assuming this is where upload functionality is)
@@ -122,7 +127,11 @@ def test_scorecard_upload_page_loads(
 
 
 def test_edit_hole_from_scorecard_review_redirects_back(
-    authenticated_page: Page, live_server, mock_scorecard_parser, user, scorecard_image_path
+    authenticated_page: Page,
+    live_server,
+    mock_scorecard_parser,
+    user,
+    scorecard_image_path,
 ):
     """Test that editing a hole from scorecard review returns to scorecard review."""
     authenticated_page.set_default_timeout(3000)
@@ -165,3 +174,93 @@ def test_edit_hole_from_scorecard_review_redirects_back(
     # Verify we're back at the review page
     assert "/scorecard/" in final_url and "/review" in final_url
     assert "Review Scorecard" in authenticated_page.content()
+
+
+def test_delete_hole_from_scorecard_review(
+    authenticated_page: Page,
+    live_server,
+    mock_scorecard_parser,
+    user,
+    scorecard_image_path,
+):
+    """Test that deleting a hole renumbers remaining holes and updates round."""
+    authenticated_page.set_default_timeout(3000)
+
+    # Navigate to upload and complete upload flow
+    url = reverse("round_entry:round_list")
+    authenticated_page.goto(f"{live_server.url}/{url}")
+    authenticated_page.get_by_role("button", name="Create New").click()
+    authenticated_page.get_by_role("menuitem", name="Upload scorecard").click()
+
+    authenticated_page.get_by_role("textbox", name="Course name").fill("Test Course")
+
+    element_handle = authenticated_page.query_selector("input[name='scorecard_image']")
+    element_handle.set_input_files(str(scorecard_image_path))
+
+    authenticated_page.get_by_role("button", name="Upload").click()
+    authenticated_page.wait_for_url("**/review", timeout=10000)
+
+    # Verify 2 holes exist initially
+    content_before = authenticated_page.content()
+    assert "Hole 1" in content_before
+    assert "Hole 2" in content_before
+
+    # Get the round from the database before deletion
+    round_obj = Round.objects.get(user=user, course_name="Test Course")
+    assert round_obj.holes_played == 2
+    assert Hole.objects.filter(round=round_obj).count() == 2
+
+    # Verify initial hole numbers
+    holes_before = list(Hole.objects.filter(round=round_obj).order_by("number"))
+    assert len(holes_before) == 2
+    assert holes_before[0].number == 1
+    assert holes_before[1].number == 2
+
+    # Get the ID of the first hole card before deleting
+    first_hole_card_id = f"hole-card-{holes_before[0].id}"
+
+    # Set up dialog handler to accept the confirmation
+    authenticated_page.on("dialog", lambda dialog: dialog.accept())
+
+    # Click delete button on first hole
+    delete_buttons = authenticated_page.locator('button[title="Delete Hole"]')
+    delete_buttons.first.click()
+
+    # Wait for the first hole card to be removed from the DOM
+    authenticated_page.wait_for_selector(
+        f"#{first_hole_card_id}", state="detached", timeout=5000
+    )
+
+    # Count hole cards - should only be 1 now
+    hole_cards = authenticated_page.locator('[id^="hole-card-"]')
+    assert hole_cards.count() == 1, "Should only have 1 hole card remaining"
+
+    # Verify the remaining hole is numbered as "Hole 1" in the card header
+    hole_number_display = authenticated_page.locator(
+        ".text-2xl.font-bold.text-center.text-gray-900"
+    )
+    assert hole_number_display.count() == 1, "Should only have 1 hole number display"
+    assert hole_number_display.first.inner_text() == "1", (
+        "Remaining hole should display number 1"
+    )
+
+    # Verify database state
+    round_obj.refresh_from_db()
+
+    # Check holes_played was decremented
+    assert round_obj.holes_played == 1, "Round holes_played should be decremented to 1"
+
+    # Check only 1 hole remains
+    remaining_holes = list(Hole.objects.filter(round=round_obj).order_by("number"))
+    assert len(remaining_holes) == 1, "Should only have 1 hole remaining"
+
+    # Check the remaining hole is renumbered to 1 (was originally hole 2)
+    assert remaining_holes[0].number == 1, "Remaining hole should be renumbered to 1"
+
+    # Verify it was originally hole 2 (check by par value)
+    assert remaining_holes[0].par == 3, (
+        "Remaining hole should have par 3 (original hole 2)"
+    )
+
+    # Verify round is still complete (1 hole with shots, holes_played=1)
+    assert round_obj.complete is True, "Round should still be complete after deletion"

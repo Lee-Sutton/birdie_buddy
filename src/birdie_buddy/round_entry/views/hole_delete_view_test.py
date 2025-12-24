@@ -21,7 +21,7 @@ class TestHoleDeleteView:
     def test_login_required(self, client, round, hole):
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": round.pk, "hole_id": hole.pk},
+            kwargs={"hole_id": hole.pk},
         )
         response = client.delete(url)
 
@@ -31,7 +31,7 @@ class TestHoleDeleteView:
     def test_delete_hole_success(self, authenticated_client, round, hole):
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": round.pk, "hole_id": hole.pk},
+            kwargs={"hole_id": hole.pk},
         )
 
         response = authenticated_client.delete(url)
@@ -47,7 +47,7 @@ class TestHoleDeleteView:
 
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": round.pk, "hole_id": hole.pk},
+            kwargs={"hole_id": hole.pk},
         )
 
         response = authenticated_client.delete(url)
@@ -66,7 +66,7 @@ class TestHoleDeleteView:
 
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": round.pk, "hole_id": other_hole.pk},
+            kwargs={"hole_id": other_hole.pk},
         )
 
         response = authenticated_client.delete(url)
@@ -89,7 +89,7 @@ class TestHoleDeleteView:
 
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": other_round.pk, "hole_id": other_hole.pk},
+            kwargs={"hole_id": other_hole.pk},
         )
 
         response = authenticated_client.delete(url)
@@ -100,7 +100,7 @@ class TestHoleDeleteView:
     def test_delete_nonexistent_hole_returns_404(self, authenticated_client, round):
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": round.pk, "hole_id": 99999},
+            kwargs={"hole_id": 99999},
         )
 
         response = authenticated_client.delete(url)
@@ -110,14 +110,15 @@ class TestHoleDeleteView:
     def test_delete_hole_with_wrong_round_returns_404(
         self, authenticated_client, user, round, hole
     ):
-        other_round = RoundFactory(user=user, course_name="Other", holes_played=9)
-
+        # This test now simply verifies that a valid hole can be deleted
+        # The "wrong round" concept no longer applies since we don't pass round_id
         url = reverse(
             "round_entry:delete_hole",
-            kwargs={"round_id": other_round.pk, "hole_id": hole.pk},
+            kwargs={"hole_id": hole.pk},
         )
 
         response = authenticated_client.delete(url)
 
-        assert response.status_code == 404
-        assert Hole.objects.filter(pk=hole.pk).exists()
+        # Hole should be successfully deleted
+        assert response.status_code == 200
+        assert not Hole.objects.filter(pk=hole.pk).exists()
