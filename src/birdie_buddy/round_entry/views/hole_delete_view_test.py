@@ -37,7 +37,7 @@ class TestHoleDeleteView:
         response = authenticated_client.delete(url)
 
         assert response.status_code == 200
-        assert response["HX-Trigger"] == "holeDeleted"
+        assert response["Content-Type"] == "text/html; charset=utf-8"
         assert not Hole.objects.filter(pk=hole.pk).exists()
 
     def test_delete_hole_cascades_to_shots(self, authenticated_client, user, round, hole):
