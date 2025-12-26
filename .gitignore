@@ -36,6 +36,7 @@ src/birdie_buddy/static/css/output.css
 
 # Environment
 .env
+.env.production
 .venv
 env/
 venv/

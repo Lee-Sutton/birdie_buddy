@@ -104,6 +104,8 @@ grpcio==1.76.0
     # via grpcio-status
 grpcio-status==1.76.0
     # via google-api-core
+gunicorn==23.0.0
+    # via birdie-buddy
 h11==0.16.0
     # via httpcore
 httpcore==1.0.9
@@ -133,6 +135,7 @@ markdown==3.10
 openai==2.9.0
     # via birdie-buddy
 packaging==24.2
+    # via gunicorn
     # via pytest
 pathspec==0.12.1
     # via djlint
