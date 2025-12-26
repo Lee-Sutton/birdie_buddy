@@ -43,4 +43,4 @@ USER appuser
 EXPOSE $PORT
 
 # Command to run the application (migrations and collectstatic handled during deployment)
-CMD gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 rci.core.wsgi:application
+CMD gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 birdie_buddy.wsgi:application
