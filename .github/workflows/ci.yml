@@ -42,13 +42,8 @@ jobs:
       - name: Run linting
         run: rye lint
 
+      - name: Set up environment variables
+        run: cp .env.example .env
+
       - name: Run tests
         run: rye run pytest
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DB: birdie_buddy
-          POSTGRES_USER: birdie_user
-          POSTGRES_PASSWORD: birdie_pass
-          SECRET_KEY: test-secret-key
-          DEBUG: "True"
