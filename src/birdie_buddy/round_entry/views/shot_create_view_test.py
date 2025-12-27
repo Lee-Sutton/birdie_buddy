@@ -5,7 +5,7 @@ from pytest_django.asserts import assertRedirects, assertTemplateUsed
 from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
 from birdie_buddy.round_entry.factories.shot_factory import ShotFactory
-from birdie_buddy.round_entry.models import Round, Hole, Shot
+from birdie_buddy.round_entry.models import Shot
 
 User = get_user_model()
 

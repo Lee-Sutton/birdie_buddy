@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
 from playwright.sync_api import Page, expect
-import os
 
 User = get_user_model()
 

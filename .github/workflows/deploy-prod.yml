@@ -1,0 +1,19 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tag-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create prod tag
+        run: |
+          TAG=$(date +'%Y.%-m.%-d.%H%M')-prod
+          git tag $TAG
+          git push origin $TAG

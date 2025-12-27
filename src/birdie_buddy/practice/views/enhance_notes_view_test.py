@@ -3,7 +3,6 @@ import pytest
 from unittest.mock import Mock, patch
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from pytest_django.asserts import assertTemplateUsed
 
 User = get_user_model()
 

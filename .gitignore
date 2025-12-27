@@ -57,3 +57,6 @@ wheels/
 
 # venv
 .venv
+
+# Playwright test results
+test-results/

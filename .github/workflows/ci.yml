@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: birdie_buddy
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+          - "10000:10000"
+          - "10001:10001"
+          - "10002:10002"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Rye
+        run: |
+          curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: rye sync
+
+      - name: Install Playwright browsers
+        run: rye run playwright install --with-deps
+
+      - name: Run linting
+        run: rye lint
+
+      - name: Set up environment variables
+        run: cp .env.example .env
+
+      - name: Run tests
+        id: tests
+        run: rye run pytest
+
+      - name: Debug - List test results
+        if: always()
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Looking for test-results:"
+          find . -name "test-results" -type d 2>/dev/null || echo "No test-results directory found"
+          ls -la test-results/ 2>/dev/null || echo "test-results/ does not exist"
+
+      - name: Upload Playwright artifacts
+        uses: actions/upload-artifact@v4
+        if: always() && steps.tests.outcome == 'failure'
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7

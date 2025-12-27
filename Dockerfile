@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PORT=8080 \
     DEBUG=False \
     SECRET_KEY=django-insecure-@6y1-ec2mj7k5&whys=-j&*^2*ui*ez*(!%i@k3%pweabg6!(j \
-    DB_NAME=rci \
+    DB_NAME=birdie_buddy \
     DB_USER=rci_user \
     DB_PASSWORD=rci_password \
     DB_HOST=localhost \
