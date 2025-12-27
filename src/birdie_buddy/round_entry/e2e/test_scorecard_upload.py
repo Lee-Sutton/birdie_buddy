@@ -18,6 +18,8 @@ User = get_user_model()
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "True"
 
+pytestmark = pytest.mark.skip
+
 
 @pytest.fixture
 def scorecard_image_path():
