@@ -26,7 +26,7 @@ class ShotCreateView(LoginRequiredMixin, View):
         hole = self.get_hole()
         shots = [
             {"start_distance": shot.start_distance, "lie": shot.lie}
-            for shot in hole.shot_set.all()
+            for shot in hole.shot_set.all().order_by("number")
         ]
 
         ShotFormSet = formset_factory(ShotForm, extra=0)
