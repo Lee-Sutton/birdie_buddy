@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: birdie_buddy
+          POSTGRES_USER: birdie_user
+          POSTGRES_PASSWORD: birdie_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Rye
+        run: |
+          curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: rye sync
+
+      - name: Install Playwright browsers
+        run: rye run playwright install --with-deps
+
+      - name: Run linting
+        run: rye lint
+
+      - name: Run tests
+        run: rye run pytest
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: birdie_buddy
+          POSTGRES_USER: birdie_user
+          POSTGRES_PASSWORD: birdie_pass
+          SECRET_KEY: test-secret-key
+          DEBUG: "True"
