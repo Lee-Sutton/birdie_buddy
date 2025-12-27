@@ -52,11 +52,21 @@ jobs:
         run: cp .env.example .env
 
       - name: Run tests
+        id: tests
         run: rye run pytest
+
+      - name: Debug - List test results
+        if: always()
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Looking for test-results:"
+          find . -name "test-results" -type d 2>/dev/null || echo "No test-results directory found"
+          ls -la test-results/ 2>/dev/null || echo "test-results/ does not exist"
 
       - name: Upload Playwright artifacts
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always() && steps.tests.outcome == 'failure'
         with:
           name: playwright-results
           path: test-results/
