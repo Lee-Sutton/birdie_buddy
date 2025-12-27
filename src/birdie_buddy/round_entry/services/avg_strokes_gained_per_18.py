@@ -1,5 +1,5 @@
 from django.db.models import Sum
-from birdie_buddy.round_entry.models import Hole, Shot
+from birdie_buddy.round_entry.models import Shot
 from collections import namedtuple
 
 StrokesGainedCategories = namedtuple(

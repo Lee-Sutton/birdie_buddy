@@ -3,7 +3,6 @@ from birdie_buddy.round_entry.services.tiger_five import TigerFiveService
 from birdie_buddy.round_entry.factories import (
     RoundFactory,
     HoleFactory,
-    full_round_factory,
 )
 from birdie_buddy.round_entry.factories.shot_factory import ShotFactory
 

@@ -111,5 +111,5 @@ def enhance_notes(request):
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid request format"}, status=400)
-    except Exception as e:
+    except Exception:
         return JsonResponse({"error": "An unexpected error occurred"}, status=500)

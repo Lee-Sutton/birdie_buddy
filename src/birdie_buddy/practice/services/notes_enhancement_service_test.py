@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import Mock
 from birdie_buddy.practice.services.notes_enhancement_service import (
     NotesEnhancementService,

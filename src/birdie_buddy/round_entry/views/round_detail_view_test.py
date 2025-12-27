@@ -3,7 +3,6 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 from birdie_buddy.round_entry.factories.full_round_factory import full_round_factory
 from birdie_buddy.round_entry.factories.round_factory import RoundFactory
-from birdie_buddy.round_entry.factories.hole_factory import HoleFactory
 
 
 @pytest.mark.django_db

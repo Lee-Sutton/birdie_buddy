@@ -32,7 +32,7 @@ class TestRound:
     def test_complete_is_false_if_hole_is_missing_shots(self, db, user):
         round = RoundFactory(user=user, holes_played=2)
         hole1 = HoleFactory(round=round, user=user, number=1)
-        hole2 = HoleFactory(round=round, user=user, number=2)
+        HoleFactory(round=round, user=user, number=2)
         ShotFactory(hole=hole1, user=user)
 
         assert round.complete is False

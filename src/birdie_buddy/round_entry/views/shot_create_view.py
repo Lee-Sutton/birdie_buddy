@@ -33,7 +33,6 @@ class ShotCreateView(LoginRequiredMixin, View):
         formset = ShotFormSet(
             initial=[get_from_list(shots, i, {}) for i in range(hole.score)]
         )
-        helper = ShotFormSetHelper()
 
         number = self.kwargs["number"]
         id = self.kwargs["id"]
