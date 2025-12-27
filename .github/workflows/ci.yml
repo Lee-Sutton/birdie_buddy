@@ -11,8 +11,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: birdie_buddy
-          POSTGRES_USER: birdie_user
-          POSTGRES_PASSWORD: birdie_pass
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
